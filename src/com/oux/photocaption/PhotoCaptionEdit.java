@@ -52,21 +52,18 @@ public class PhotoCaptionEdit extends Activity
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-        Log.i(TAG,"Navigation:" + actionBar.getNavigationMode());
         // TODO: switch between edit and view:
         // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-        // actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setSubtitle("Edit Mode");
 
         /*
-        actionBar.setDisplayOptions(
-                ActionBar.DISPLAY_SHOW_CUSTOM,
-                ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME
-                | ActionBar.DISPLAY_SHOW_TITLE);
+           actionBar.setDisplayOptions(
+           ActionBar.DISPLAY_SHOW_CUSTOM,
+           ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME
+           | ActionBar.DISPLAY_SHOW_TITLE);
 
-                */
+         */
         // Get intent, action and MIME type
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -82,7 +79,8 @@ public class PhotoCaptionEdit extends Activity
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 if (imageUri.getScheme().equals("content")) 
                 {
-                    Log.i(TAG,"Uri1:" + imageUri + " uri2:" + intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
+                    Log.i(TAG,"Uri1:" + imageUri + " uri2:" +
+                            intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
                     File image = new File(getRealPathFromURI(imageUri));
                     handleImage(Uri.fromFile(image));
                 } else {
@@ -122,6 +120,7 @@ public class PhotoCaptionEdit extends Activity
                 finish();
                 return true;
             case android.R.id.home:
+                // TODO: go to our gallery tiled
                 finish();
                 return true;
             default:
@@ -129,15 +128,14 @@ public class PhotoCaptionEdit extends Activity
         }
     }
 
+    /*
     public class H extends Handler
     {
         public void handleMessage(Message msg) {
-        // public void onReceiveResult(int resultCode, Bundle resultData) {
             Log.i(TAG,"Receive Result: " + msg);
         }
     }
 
-    /*
     public class RR extends ResultReceiver
     {
         public void RR (Handler handler)
@@ -152,7 +150,7 @@ public class PhotoCaptionEdit extends Activity
             Log.i(TAG,"Receive Result: " + resultCode);
         }
     }
-    */
+     */
 
     @Override
     public void onResume() {
@@ -259,33 +257,4 @@ public class PhotoCaptionEdit extends Activity
                     Toast.LENGTH_LONG).show();
         }
     }
-
-    private String getTagString(String tag)
-    {
-        return(tag + " : " + mExif.getAttribute(tag) + "\n");
-    }
-
-    private void showDescription()
-    {
-        /*
-           String myAttribute="Exif information ---\n";
-           myAttribute += getTagString(ExifInterface.TAG_DATETIME);
-           myAttribute += getTagString(ExifInterface.TAG_FLASH);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF);
-           myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH);
-           myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH);
-           myAttribute += getTagString(ExifInterface.TAG_MAKE);
-           myAttribute += getTagString(ExifInterface.TAG_MODEL);
-           myAttribute += getTagString(ExifInterface.TAG_ORIENTATION);
-           myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE);
-           myAttribute += getTagString("UserComment");
-           descriptionView.setText(myAttribute);
-         */
-        descriptionView.setText(mExif.getAttribute("UserComment"));
-    }
-        
 }
-

@@ -48,7 +48,9 @@ public class PhotoCaptionView extends Activity
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.hide();
+        // actionBar.hide();
+
+        actionBar.setSubtitle("View Mode");
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -61,7 +63,8 @@ public class PhotoCaptionView extends Activity
             imageUri = intent.getData();
             if (imageUri.getScheme().equals("content")) 
             {
-                Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" + intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
+                Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" +
+                        intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
                 File image = new File(getRealPathFromURI(imageUri));
                 handleImage(Uri.fromFile(image));
             } else {
@@ -80,10 +83,15 @@ public class PhotoCaptionView extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
+        Intent intent;
         switch (item.getItemId()) {
+            case R.id.action_capture:
+                intent = new Intent(this,PhotoCaptionEdit.class);
+                startActivity(intent);
+                finish();
+                return true;
             case R.id.action_edit:
-                Intent intent = new Intent(this,PhotoCaptionEdit.class);
+                intent = new Intent(this,PhotoCaptionEdit.class);
                 intent.setAction(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_STREAM, imageUri);
                 intent.setType("image/jpeg");
@@ -91,6 +99,7 @@ public class PhotoCaptionView extends Activity
                 finish();
                 return true;
             case android.R.id.home:
+                // TODO: go to our gallery tiled
                 finish();
                 return true;
             default:
@@ -110,9 +119,9 @@ public class PhotoCaptionView extends Activity
         return true;
     }
 
-
     public void sharePhoto() {
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND, Uri.parse("file:///sdcard/image.png")); 
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND,
+                Uri.parse("file:///sdcard/image.png")); 
         shareIntent.setType("image/png");
         this.setResult(Activity.RESULT_OK, shareIntent); 
         this.finish();
