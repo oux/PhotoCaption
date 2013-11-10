@@ -2,6 +2,8 @@
 <resources>
     <string name="save">Save</string>
     <string name="app_name">PhotoCaption</string>
+    <string name="pc_edit">PC Edit</string>
+    <string name="pc_view">PC View</string>
     <string name="edit">Edit</string>
     <string name="view">View</string>
 </resources>

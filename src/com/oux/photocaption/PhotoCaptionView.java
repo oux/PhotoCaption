@@ -61,15 +61,22 @@ public class PhotoCaptionView extends Activity
 
         if (Intent.ACTION_VIEW.equals(action)) {
             imageUri = intent.getData();
-            if (imageUri.getScheme().equals("content")) 
-            {
-                Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" +
-                        intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
-                File image = new File(getRealPathFromURI(imageUri));
-                handleImage(Uri.fromFile(image));
-            } else {
-                handleImage(imageUri);
+        } else if (Intent.ACTION_SEND.equals(action) && type != null) {
+            Log.i(TAG,"Action View:" + intent.getData());
+            if (type.startsWith("image/")) {
+                imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             }
+        } else {
+            finish();
+        }
+        if (imageUri.getScheme().equals("content")) 
+        {
+            Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" +
+                    intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
+            File image = new File(getRealPathFromURI(imageUri));
+            handleImage(Uri.fromFile(image));
+        } else {
+            handleImage(imageUri);
         }
     }
 

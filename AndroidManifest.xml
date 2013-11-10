@@ -7,11 +7,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19" />
 
-    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher"
+    <application android:label="@string/app_name"
+        android:icon="@drawable/photo_caption_a"
         android:theme="@android:style/Theme.Holo">
         <!-- android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"-->
         <activity android:name="PhotoCaptionEdit"
-            android:label="@string/app_name"
+            android:label="@string/pc_edit"
+            android:icon="@drawable/photo_caption_a_"
             >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -29,9 +31,14 @@
             </intent-filter>
         </activity>
         <activity android:name="PhotoCaptionView"
-            android:label="@string/view"
-            android:title="View"
+            android:label="@string/pc_view"
+            android:icon="@drawable/photo_caption_a"
             >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
