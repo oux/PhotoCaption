@@ -20,17 +20,19 @@ import android.widget.Button;
 import android.database.Cursor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuInflater;
+import android.app.ActionBar;
 
 
 public class PhotoCaptionView extends Activity
 {
     static final String TAG = "photoCaptionView";
     private Uri imageUri;
-    private static int TAKE_PICTURE = 1;    
     TextView descriptionView;
     ImageView imageView;
-    boolean edit = false;
     ExifInterface mExif;
 
     /** Called when the activity is first created. */
@@ -38,15 +40,12 @@ public class PhotoCaptionView extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if (edit) {
-            setContentView(R.layout.edit);
-        }
-        else
-        {
-            setContentView(R.layout.view);
-        }
+        setContentView(R.layout.view);
 
         Log.i(TAG,"onCreate");
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -55,61 +54,55 @@ public class PhotoCaptionView extends Activity
         imageView = (ImageView) findViewById(R.id.ImageView);
         descriptionView = (TextView)findViewById(R.id.Description);
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith("image/")) {
-                Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                Log.i(TAG,"Uri1:" + imageUri + " uri2:" + intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT) + " real path:" + getRealPathFromURI(imageUri));
+        if (Intent.ACTION_VIEW.equals(action)) {
+            imageUri = intent.getData();
+            if (imageUri.getScheme().equals("content")) 
+            {
+                Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" + intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
                 File image = new File(getRealPathFromURI(imageUri));
                 handleImage(Uri.fromFile(image));
+            } else {
+                handleImage(imageUri);
             }
-        } else {
-            takePhoto();
         }
     }
-    private OnClickListener SaveListener = new OnClickListener() {
-        public void onClick(View v) {
-            setDescription(descriptionView.getText().toString());
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Intent intent = new Intent(this,PhotoCaptionEdit.class);
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                intent.setType("image/jpeg");
+                startActivity(intent);
+                finish();
+                return true;
+            case R.id.action_save:
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-    };
-
-
-    public void takePhoto() {
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        // IMG_20130510_135404.jpg
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        File photo = new File(Environment.getExternalStorageDirectory()+ "/DCIM/Camera",  "CAP_"+ sdf.format(new Date()) +".jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
-        imageUri = Uri.fromFile(photo);
-        startActivityForResult(intent, TAKE_PICTURE);
     }
 
-    private void scanMedia(String path) {
-        File file = new File(path);
-        Uri uri = Uri.fromFile(file);
-        Intent scanFileIntent = new Intent(
-                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
-        sendBroadcast(scanFileIntent);
-    }
 
     public void sharePhoto() {
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND, Uri.parse("file:///sdcard/image.png")); 
         shareIntent.setType("image/png");
         this.setResult(Activity.RESULT_OK, shareIntent); 
         this.finish();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == TAKE_PICTURE)
-        {
-            if (resultCode == Activity.RESULT_OK) {
-                getContentResolver().notifyChange(imageUri, null);
-                scanMedia(imageUri.getPath());
-                handleImage(imageUri);
-            }
-        }
     }
 
     public String getRealPathFromURI(Uri uri) {
@@ -135,7 +128,6 @@ public class PhotoCaptionView extends Activity
         }
     }
 
-
     void getDescription()
     {
         try {
@@ -144,45 +136,4 @@ public class PhotoCaptionView extends Activity
             e.printStackTrace();
         }
     }
-
-    void setDescription(String description)
-    {
-        mExif.setAttribute("UserComment",description);
-        try {
-            mExif.saveAttributes();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error during saving Exif", 
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private String getTagString(String tag)
-    {
-        return(tag + " : " + mExif.getAttribute(tag) + "\n");
-    }
-
-    private void showDescription()
-    {
-        /*
-           String myAttribute="Exif information ---\n";
-           myAttribute += getTagString(ExifInterface.TAG_DATETIME);
-           myAttribute += getTagString(ExifInterface.TAG_FLASH);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE);
-           myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF);
-           myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH);
-           myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH);
-           myAttribute += getTagString(ExifInterface.TAG_MAKE);
-           myAttribute += getTagString(ExifInterface.TAG_MODEL);
-           myAttribute += getTagString(ExifInterface.TAG_ORIENTATION);
-           myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE);
-           myAttribute += getTagString("UserComment");
-           descriptionView.setText(myAttribute);
-         */
-        descriptionView.setText(mExif.getAttribute("UserComment"));
-    }
-        
 }
-

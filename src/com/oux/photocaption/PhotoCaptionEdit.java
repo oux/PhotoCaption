@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.database.Cursor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +34,6 @@ public class PhotoCaptionEdit extends Activity
     private static int TAKE_PICTURE = 1;    
     TextView descriptionView;
     ImageView imageView;
-    boolean edit = true;
     ExifInterface mExif;
 
     /** Called when the activity is first created. */
@@ -44,21 +42,12 @@ public class PhotoCaptionEdit extends Activity
     {
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
-        // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (edit) {
-            setContentView(R.layout.edit);
-            // Button button = (Button)findViewById(R.id.SaveButton);
-            // button.setOnClickListener(SaveListener);
-        }
-        else
-        {
-            setContentView(R.layout.view);
-        }
+        setContentView(R.layout.edit);
 
         ActionBar actionBar = getActionBar();
-        // if (actionBar != null)
         actionBar.setDisplayHomeAsUpEnabled(true);
-
+        // actionBar.setDisplayShowTitleEnabled(false);
+        // actionBar.hide();
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -68,16 +57,23 @@ public class PhotoCaptionEdit extends Activity
         descriptionView = (TextView)findViewById(R.id.Description);
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
+            Log.i(TAG,"Action Edit:" + intent.getData());
             if (type.startsWith("image/")) {
-                Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                Log.i(TAG,"Uri1:" + imageUri + " uri2:" + intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT) + " real path:" + getRealPathFromURI(imageUri));
-                File image = new File(getRealPathFromURI(imageUri));
-                handleImage(Uri.fromFile(image));
+                imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (imageUri.getScheme().equals("content")) 
+                {
+                    Log.i(TAG,"Uri1:" + imageUri + " uri2:" + intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
+                    File image = new File(getRealPathFromURI(imageUri));
+                    handleImage(Uri.fromFile(image));
+                } else {
+                    handleImage(imageUri);
+                }
             }
         } else {
             takePhoto();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,19 +91,17 @@ public class PhotoCaptionEdit extends Activity
                 return true;
             case R.id.action_save:
                 setDescription(descriptionView.getText().toString());
+                Intent intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
+                startActivity(intent);
+                finish();
+                return true;
+            case android.R.id.home:
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-    private OnClickListener SaveListener = new OnClickListener() {
-        public void onClick(View v) {
-            setDescription(descriptionView.getText().toString());
-        }
-    };
-
 
     public void takePhoto() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -124,7 +118,7 @@ public class PhotoCaptionEdit extends Activity
         File file = new File(path);
         Uri uri = Uri.fromFile(file);
         Intent scanFileIntent = new Intent(
-                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
+                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, imageUri);
         sendBroadcast(scanFileIntent);
     }
 
