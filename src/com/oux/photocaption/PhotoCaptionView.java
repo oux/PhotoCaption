@@ -24,6 +24,7 @@ import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.app.ActionBar;
 
 
@@ -34,6 +35,7 @@ public class PhotoCaptionView extends Activity
     TextView descriptionView;
     ImageView imageView;
     ExifInterface mExif;
+    ActionBar actionBar;
 
     /** Called when the activity is first created. */
     @Override
@@ -44,8 +46,9 @@ public class PhotoCaptionView extends Activity
 
         Log.i(TAG,"onCreate");
 
-        ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.hide();
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -71,7 +74,7 @@ public class PhotoCaptionView extends Activity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actions, menu);
+        inflater.inflate(R.menu.view_actions, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -87,14 +90,24 @@ public class PhotoCaptionView extends Activity
                 startActivity(intent);
                 finish();
                 return true;
-            case R.id.action_save:
-                return true;
             case android.R.id.home:
                 finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (actionBar.isShowing()) {
+                actionBar.hide();
+            } else {
+                actionBar.show();
+            }
+        }
+        return true;
     }
 
 

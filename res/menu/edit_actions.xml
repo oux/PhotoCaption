@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_edit"
+    <item android:id="@+id/action_view"
         android:icon="@android:drawable/editbox_background_normal"
-        android:title="Edit"
+        android:title="View"
         showAsAction="ifRoom" />
     <item android:id="@+id/action_save"
         android:icon="@android:drawable/ic_input_add"
         android:title="Save"
-        showAsAction="always|withText" />
+        showAsAction="always" />
 </menu>

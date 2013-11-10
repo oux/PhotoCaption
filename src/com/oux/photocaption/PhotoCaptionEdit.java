@@ -24,6 +24,7 @@ import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.app.ActionBar;
 
 
@@ -35,6 +36,7 @@ public class PhotoCaptionEdit extends Activity
     TextView descriptionView;
     ImageView imageView;
     ExifInterface mExif;
+    ActionBar actionBar;
 
     /** Called when the activity is first created. */
     @Override
@@ -44,11 +46,16 @@ public class PhotoCaptionEdit extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
 
-        ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         // actionBar.setDisplayShowTitleEnabled(false);
-        // actionBar.hide();
+        /*
+        actionBar.setDisplayOptions(
+                ActionBar.DISPLAY_SHOW_CUSTOM,
+                ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME
+                | ActionBar.DISPLAY_SHOW_TITLE);
 
+                */
         // Get intent, action and MIME type
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -74,24 +81,28 @@ public class PhotoCaptionEdit extends Activity
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actions, menu);
+        inflater.inflate(R.menu.edit_actions, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
+        Intent intent;
         switch (item.getItemId()) {
-            case R.id.action_edit:
+            case R.id.action_view:
+                intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.action_save:
                 setDescription(descriptionView.getText().toString());
-                Intent intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
+                intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
                 startActivity(intent);
                 finish();
                 return true;
@@ -101,6 +112,18 @@ public class PhotoCaptionEdit extends Activity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (actionBar.isShowing()) {
+                actionBar.hide();
+            } else {
+                actionBar.show();
+            }
+        }
+        return true;
     }
 
     public void takePhoto() {
@@ -153,7 +176,6 @@ public class PhotoCaptionEdit extends Activity
         if (imageUri != null) {
             Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
             imageView.setImageURI(imageUri);
-
             try {
                 mExif = new ExifInterface(imageUri.getPath());
             } catch (IOException e) {
