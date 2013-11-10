@@ -18,6 +18,8 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.SpinnerAdapter;
+import android.widget.ArrayAdapter;
 import android.database.Cursor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -31,6 +33,7 @@ import android.app.ActionBar;
 import android.os.ResultReceiver;
 import android.os.Handler;
 import android.os.Message;
+import android.app.ActionBar.OnNavigationListener;
 
 public class PhotoCaptionEdit extends Activity
 {
@@ -50,12 +53,38 @@ public class PhotoCaptionEdit extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
 
+        /*
+
+        SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.action_list,
+                          android.R.layout.simple_spinner_dropdown_item);
+
+        OnNavigationListener mNavigationCallback = new OnNavigationListener() {
+            // Get the same strings provided for the drop-down's ArrayAdapter
+            String[] strings = getResources().getStringArray(R.array.action_list);
+
+            @Override
+            public boolean onNavigationItemSelected(int position, long itemId) {
+                // Create new fragment from our own Fragment class
+                // ListContentFragment newFragment = new ListContentFragment();
+                // FragmentTransaction ft = openFragmentTransaction();
+                // Replace whatever is in the fragment container with this fragment
+                //  and give the fragment a tag name equal to the string at the position selected
+                // ft.replace(R.id.edit, newFragment, strings[position]);
+                // Apply changes
+                // ft.commit();
+                return true;
+            }
+        };
+
+
+        */
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        // TODO: switch between edit and view:
         // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        // actionBar.setListNavigationCallbacks(mSpinnerAdapter, mNavigationCallback);
 
         actionBar.setSubtitle("Edit Mode");
+
 
         /*
            actionBar.setDisplayOptions(
