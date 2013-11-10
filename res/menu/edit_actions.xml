@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:yourapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_view"
-        android:icon="@android:drawable/editbox_background_normal"
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/action_capture"
+        android:title="Capture"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:showAsAction="ifRoom|withText"
+        />
+    <item
+        android:id="@+id/action_gallery"
         android:title="View"
-        showAsAction="ifRoom" />
-    <item android:id="@+id/action_save"
-        android:icon="@android:drawable/ic_input_add"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:showAsAction="ifRoom|withText"
+        />
+    <item
+        android:id="@+id/action_save"
+        android:icon="@android:drawable/ic_menu_save"
         android:title="Save"
-        showAsAction="always" />
+        android:showAsAction="ifRoom|withText"
+        />
 </menu>

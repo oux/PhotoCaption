@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import java.util.Date;
 import android.content.Intent;
+import android.content.Context;
 import android.media.ExifInterface;
 import android.view.View;
 import java.io.File;
@@ -25,8 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
 import android.app.ActionBar;
-
+import android.os.ResultReceiver;
+import android.os.Handler;
+import android.os.Message;
 
 public class PhotoCaptionEdit extends Activity
 {
@@ -48,7 +52,14 @@ public class PhotoCaptionEdit extends Activity
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        Log.i(TAG,"Navigation:" + actionBar.getNavigationMode());
+        // TODO: switch between edit and view:
+        // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
         // actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setSubtitle("Edit Mode");
+
         /*
         actionBar.setDisplayOptions(
                 ActionBar.DISPLAY_SHOW_CUSTOM,
@@ -62,6 +73,8 @@ public class PhotoCaptionEdit extends Activity
         String type = intent.getType();
         imageView = (ImageView) findViewById(R.id.ImageView);
         descriptionView = (TextView)findViewById(R.id.Description);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             Log.i(TAG,"Action Edit:" + intent.getData());
@@ -86,7 +99,6 @@ public class PhotoCaptionEdit extends Activity
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_actions, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -95,7 +107,10 @@ public class PhotoCaptionEdit extends Activity
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.action_view:
+            case R.id.action_capture:
+                takePhoto();
+                return true;
+            case R.id.action_gallery:
                 intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
                 startActivity(intent);
                 finish();
@@ -112,6 +127,42 @@ public class PhotoCaptionEdit extends Activity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public class H extends Handler
+    {
+        public void handleMessage(Message msg) {
+        // public void onReceiveResult(int resultCode, Bundle resultData) {
+            Log.i(TAG,"Receive Result: " + msg);
+        }
+    }
+
+    /*
+    public class RR extends ResultReceiver
+    {
+        public void RR (Handler handler)
+        {
+            Log.i(TAG,"Constructor");
+            super(handler);
+        }
+
+        @Override
+        public void onReceiveResult(int resultCode, Bundle resultData)
+        {
+            Log.i(TAG,"Receive Result: " + resultCode);
+        }
+    }
+    */
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG,"onResume");
+        // Handler h=new H();
+        // ResultReceiver rr = new RR(h);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
+        // imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT, rr);
     }
 
     @Override
