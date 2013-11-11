@@ -40,10 +40,6 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
@@ -54,18 +50,13 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-        <activity android:name="MainActivity"
+        <activity android:name="PhotoCaptionGallery"
             android:label="@string/pc_gallery"
             android:icon="@drawable/photo_caption_a"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
     </application>

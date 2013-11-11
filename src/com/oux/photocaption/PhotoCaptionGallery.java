@@ -18,7 +18,7 @@ import android.widget.Toast;
  * @author sebastien michel
  *
  */
-public class MainActivity extends Activity {
+public class PhotoCaptionGallery extends Activity {
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
 
@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
         gridView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                 int position, long id) {
-                Toast.makeText(MainActivity.this, position + "#Selected",
+                Toast.makeText(PhotoCaptionGallery.this, position + "#Selected",
                     Toast.LENGTH_SHORT).show();
             }
 
