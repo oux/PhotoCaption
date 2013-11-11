@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/action_capture"
-        android:title="Capture"
-        android:icon="@android:drawable/ic_menu_camera"
-        android:showAsAction="ifRoom|withText"
-        />
-    <item
         android:id="@+id/action_gallery"
-        android:title="View"
+        android:title="@string/gallery"
         android:icon="@android:drawable/ic_menu_gallery"
         android:showAsAction="ifRoom|withText"
         />
     <item
+        android:id="@+id/action_capture"
+        android:title="@string/capture"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:showAsAction="ifRoom|withText"
+        />
+    <item
+        android:id="@+id/action_view"
+        android:title="@string/view"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:showAsAction="always"
+        />
+    <item
         android:id="@+id/action_save"
         android:icon="@android:drawable/ic_menu_save"
-        android:title="Save"
-        android:showAsAction="ifRoom|withText"
+        android:title="@string/save"
+        android:showAsAction="always"
         />
 </menu>

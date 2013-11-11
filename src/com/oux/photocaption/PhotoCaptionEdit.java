@@ -30,9 +30,9 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.app.ActionBar;
-import android.os.ResultReceiver;
-import android.os.Handler;
-import android.os.Message;
+// import android.os.ResultReceiver;
+// import android.os.Handler;
+// import android.os.Message;
 import android.app.ActionBar.OnNavigationListener;
 
 public class PhotoCaptionEdit extends Activity
@@ -83,8 +83,8 @@ public class PhotoCaptionEdit extends Activity
         actionBar.setDisplayHomeAsUpEnabled(true);
         // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         // actionBar.setListNavigationCallbacks(mSpinnerAdapter, mNavigationCallback);
-
-        actionBar.setSubtitle("Edit Mode");
+        actionBar.setTitle(R.string.app_name);
+        actionBar.setSubtitle(R.string.mode_edit);
 
 
         /*
@@ -126,7 +126,6 @@ public class PhotoCaptionEdit extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_actions, menu);
         return super.onCreateOptionsMenu(menu);
@@ -134,14 +133,18 @@ public class PhotoCaptionEdit extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_capture:
                 takePhoto();
                 return true;
-            case R.id.action_gallery:
+            case R.id.action_view:
                 intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
+                startActivity(intent);
+                finish();
+                return true;
+            case R.id.action_gallery:
+                intent = new Intent(this,PhotoCaptionGallery.class);
                 startActivity(intent);
                 finish();
                 return true;

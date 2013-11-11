@@ -50,7 +50,8 @@ public class PhotoCaptionView extends Activity
         actionBar.setDisplayHomeAsUpEnabled(true);
         // actionBar.hide();
 
-        actionBar.setSubtitle("View Mode");
+        actionBar.setTitle(R.string.app_name);
+        actionBar.setSubtitle(R.string.mode_view);
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -97,6 +98,11 @@ public class PhotoCaptionView extends Activity
                 startActivity(intent);
                 finish();
                 return true;
+            case R.id.action_gallery:
+                intent = new Intent(this,PhotoCaptionGallery.class);
+                startActivity(intent);
+                finish();
+                return true;
             case R.id.action_edit:
                 intent = new Intent(this,PhotoCaptionEdit.class);
                 intent.setAction(Intent.ACTION_SEND);
@@ -106,7 +112,9 @@ public class PhotoCaptionView extends Activity
                 finish();
                 return true;
             case android.R.id.home:
-                // TODO: go to our gallery tiled
+                // TODO: go to our gallery tiled relevant ?
+                intent = new Intent(this,PhotoCaptionGallery.class);
+                startActivity(intent);
                 finish();
                 return true;
             default:
