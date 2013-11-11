@@ -44,6 +44,7 @@ public class PhotoCaptionEdit extends Activity
     ImageView imageView;
     ExifInterface mExif;
     ActionBar actionBar;
+    public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
 
     /** Called when the activity is first created. */
     @Override
@@ -102,6 +103,8 @@ public class PhotoCaptionEdit extends Activity
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
 
+        // TODO:
+        // ACTION_REVIEW.equalsIgnoreCase(action)...
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             Log.i(TAG,"Action Edit:" + intent.getData());
             if (type.startsWith("image/")) {
