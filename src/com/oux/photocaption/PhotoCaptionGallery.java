@@ -2,21 +2,21 @@ package com.oux.photocaption;
 
 import java.util.ArrayList;
 import android.app.Activity;
+import android.app.ActionBar;
 import android.content.res.TypedArray;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.GridView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
-import android.util.Log;
-import android.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
-import android.content.Intent;
+import android.util.Log;
  
 /**
  *
@@ -24,7 +24,7 @@ import android.content.Intent;
  * @author sebastien michel
  *
  */
-public class PhotoCaptionGallery extends Activity {
+public class PhotoCaptionGallery extends Activity implements OnItemClickListener {
     static final String TAG = "photoCaptionGallery";
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
@@ -41,17 +41,20 @@ public class PhotoCaptionGallery extends Activity {
         actionBar.setSubtitle(R.string.mode_gallery);
 
         gridView = (GridView) findViewById(R.id.gridView);
+
+        // TODO: try to navigate by album (NavigationList).
         customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, getData());
         gridView.setAdapter(customGridAdapter);
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                int position, long id) {
-                Log.i(TAG, "Click on position=" + position + ", id=" + id);
-                Toast.makeText(PhotoCaptionGallery.this, position + "#Selected",
-                    Toast.LENGTH_SHORT).show();
-            }
 
-        });
+        Log.i(TAG, "Creating setOnItemClickListener");
+        gridView.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        Intent i = new Intent(getApplicationContext(), PhotoCaptionView.class);
+        // i.putExtra("id", position);
+        startActivity(i);
     }
 
     @Override

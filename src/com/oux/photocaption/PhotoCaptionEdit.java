@@ -222,6 +222,7 @@ public class PhotoCaptionEdit extends Activity
     }
 
     private void scanMedia(String path) {
+        //TODO: try insertImage(... description)
         File file = new File(path);
         Uri uri = Uri.fromFile(file);
         Intent scanFileIntent = new Intent(

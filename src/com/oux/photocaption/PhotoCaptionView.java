@@ -1,13 +1,16 @@
 package com.oux.photocaption;
 
+import java.util.Date;
+import java.io.IOException;
+import java.io.File;
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import java.util.Date;
 import android.content.Intent;
 import android.media.ExifInterface;
 import android.view.View;
-import java.io.File;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -18,8 +21,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.database.Cursor;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -153,15 +154,19 @@ public class PhotoCaptionView extends Activity
         if (imageUri != null) {
             Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
             imageView.setImageURI(imageUri);
-
-            try {
-                mExif = new ExifInterface(imageUri.getPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error during loading Exif", 
-                        Toast.LENGTH_LONG).show();
-            }
+            openExif();
             getDescription();
+        }
+    }
+
+    void openExif()
+    {
+        try {
+            mExif = new ExifInterface(imageUri.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error during loading Exif", 
+                    Toast.LENGTH_LONG).show();
         }
     }
 
