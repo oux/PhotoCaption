@@ -51,6 +51,12 @@ public class GridViewAdapter extends ArrayAdapter {
     }
 
 
+    public Uri getUri(int position) {
+        externalCursor.moveToPosition(getCount()-(position+1));
+        int imageID = externalCursor.getInt( externalColumnIndex );
+        return  Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;

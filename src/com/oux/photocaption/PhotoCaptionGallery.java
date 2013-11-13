@@ -52,9 +52,8 @@ public class PhotoCaptionGallery extends Activity implements OnItemClickListener
 
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-        Intent i = new Intent(getApplicationContext(), PhotoCaptionView.class);
-        // i.putExtra("id", position);
-        startActivity(i);
+        Intent intent = new Intent(Intent.ACTION_VIEW, customGridAdapter.getUri(position), this,PhotoCaptionView.class);
+        startActivity(intent);
     }
 
     @Override

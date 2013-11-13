@@ -113,9 +113,6 @@ public class PhotoCaptionView extends Activity
                 finish();
                 return true;
             case android.R.id.home:
-                // TODO: go to our gallery tiled relevant ?
-                intent = new Intent(this,PhotoCaptionGallery.class);
-                startActivity(intent);
                 finish();
                 return true;
             default:
@@ -154,12 +151,12 @@ public class PhotoCaptionView extends Activity
         if (imageUri != null) {
             Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
             imageView.setImageURI(imageUri);
-            openExif();
+            openExif(imageUri);
             getDescription();
         }
     }
 
-    void openExif()
+    void openExif(Uri imageUri)
     {
         try {
             mExif = new ExifInterface(imageUri.getPath());
