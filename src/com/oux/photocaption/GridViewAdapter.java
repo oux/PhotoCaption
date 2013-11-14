@@ -35,6 +35,7 @@ public class GridViewAdapter extends ArrayAdapter {
 
     public GridViewAdapter(Context context, int layoutResourceId,
             ArrayList data) {
+        // TODO: upgrade gridview/adapter when data changed (every onResume ?)
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.mContext = context;

@@ -1,48 +1,56 @@
 package com.oux.photocaption;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
 import java.util.Date;
+// import java.io.FileInputStream;
+// import java.io.OutputStream;
+// import java.io.BufferedOutputStream;
+// import java.io.FileOutputStream;
+import java.io.File;
+// import java.io.IOException;
+import java.text.SimpleDateFormat;
+
+import android.app.Activity;
+import android.app.ActionBar;
+// import android.os.ResultReceiver;
+// import android.os.Handler;
+// import android.os.Message;
+import android.app.ActionBar.OnNavigationListener;
+import android.os.Bundle;
+import android.os.Environment;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.content.Intent;
 import android.content.Context;
-import android.media.ExifInterface;
-import android.view.View;
-import java.io.File;
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
-import android.os.Environment;
-import android.content.ContentResolver;
-import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.SpinnerAdapter;
 import android.widget.ArrayAdapter;
 import android.database.Cursor;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
-import android.app.ActionBar;
-// import android.os.ResultReceiver;
-// import android.os.Handler;
-// import android.os.Message;
-import android.app.ActionBar.OnNavigationListener;
+import android.view.View;
+
+import com.android.gallery3d.exif.ExifInterface;
+import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.IfdId;
 
 public class PhotoCaptionEdit extends Activity
 {
     static final String TAG = "photoCaptionEdit";
     private Uri imageUri;
-    private static int TAKE_PICTURE = 1;    
+    private static int TAKE_PICTURE = 100;
     TextView descriptionView;
     ImageView imageView;
-    ExifInterface mExif;
+    File mFile;
     ActionBar actionBar;
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
 
@@ -54,31 +62,6 @@ public class PhotoCaptionEdit extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
 
-        /*
-
-        SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.action_list,
-                          android.R.layout.simple_spinner_dropdown_item);
-
-        OnNavigationListener mNavigationCallback = new OnNavigationListener() {
-            // Get the same strings provided for the drop-down's ArrayAdapter
-            String[] strings = getResources().getStringArray(R.array.action_list);
-
-            @Override
-            public boolean onNavigationItemSelected(int position, long itemId) {
-                // Create new fragment from our own Fragment class
-                // ListContentFragment newFragment = new ListContentFragment();
-                // FragmentTransaction ft = openFragmentTransaction();
-                // Replace whatever is in the fragment container with this fragment
-                //  and give the fragment a tag name equal to the string at the position selected
-                // ft.replace(R.id.edit, newFragment, strings[position]);
-                // Apply changes
-                // ft.commit();
-                return true;
-            }
-        };
-
-
-        */
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -86,14 +69,6 @@ public class PhotoCaptionEdit extends Activity
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_edit);
 
-
-        /*
-           actionBar.setDisplayOptions(
-           ActionBar.DISPLAY_SHOW_CUSTOM,
-           ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME
-           | ActionBar.DISPLAY_SHOW_TITLE);
-
-         */
         // Get intent, action and MIME type
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -109,15 +84,7 @@ public class PhotoCaptionEdit extends Activity
             Log.i(TAG,"Action Edit:" + intent.getData());
             if (type.startsWith("image/")) {
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                if (imageUri.getScheme().equals("content")) 
-                {
-                    Log.i(TAG,"Uri1:" + imageUri + " uri2:" +
-                            intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
-                    File image = new File(getRealPathFromURI(imageUri));
-                    handleImage(Uri.fromFile(image));
-                } else {
-                    handleImage(imageUri);
-                }
+                handleImage();
             }
         } else {
             takePhoto();
@@ -210,11 +177,33 @@ public class PhotoCaptionEdit extends Activity
         return true;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TAKE_PICTURE) {
+            if (resultCode == Activity.RESULT_OK) {
+                /* behave bad:
+                try {
+                    MediaStore.Images.Media.insertImage(getContentResolver(), imageUri.getPath(), "ceci est le titre" , "ceci est une description");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                */
+                scanMedia(imageUri.getPath());
+                handleImage();
+            } else {
+                finish();
+            }
+        }
+    }
+
     public void takePhoto() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        // IMG_20130510_135404.jpg
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        File photo = new File(Environment.getExternalStorageDirectory()+ "/DCIM/Camera",  "CAP_"+ sdf.format(new Date()) +".jpg");
+        File path = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES);
+        Log.i(TAG,"path:" + path);
+        File photo = new File(path,  "CAP_"+ sdf.format(new Date()) +".jpg");
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
@@ -230,44 +219,25 @@ public class PhotoCaptionEdit extends Activity
         sendBroadcast(scanFileIntent);
     }
 
-    public void sharePhoto() {
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND, Uri.parse("file:///sdcard/image.png")); 
+    /*
+       public void sharePhoto() {
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND, Uri.parse("file:///sdcard/image.png"));
         shareIntent.setType("image/png");
-        this.setResult(Activity.RESULT_OK, shareIntent); 
+        this.setResult(Activity.RESULT_OK, shareIntent);
         this.finish();
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == TAKE_PICTURE)
-        {
-            if (resultCode == Activity.RESULT_OK) {
-                getContentResolver().notifyChange(imageUri, null);
-                scanMedia(imageUri.getPath());
-                handleImage(imageUri);
-            }
-        }
-    }
+    */
 
     public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null); 
-        cursor.moveToFirst(); 
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA); 
-        return cursor.getString(idx); 
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 
-    void handleImage(Uri imageUri) {
+    void handleImage() {
         if (imageUri != null) {
-            Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
             imageView.setImageURI(imageUri);
-            try {
-                mExif = new ExifInterface(imageUri.getPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error during loading Exif", 
-                        Toast.LENGTH_LONG).show();
-            }
             getDescription();
         }
     }
@@ -275,22 +245,40 @@ public class PhotoCaptionEdit extends Activity
 
     void getDescription()
     {
+        ExifInterface exifInterface = new ExifInterface();
         try {
-            descriptionView.setText(mExif.getAttribute("UserComment"));
+            exifInterface.readExif(getContentResolver().openInputStream(imageUri));
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    void setDescription(String description)
-    {
-        mExif.setAttribute("UserComment",description);
-        try {
-            mExif.saveAttributes();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error during saving Exif", 
-                    Toast.LENGTH_LONG).show();
+        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+        if (tag != null)
+        {
+            descriptionView.setText(tag.getValueAsString());
         }
     }
+
+  void setDescription(String description)
+  {
+      Log.i(TAG,"Setting description:" + description + " on " + imageUri);
+      ExifInterface exifInterface = new ExifInterface();
+      ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, description);
+      if(tag != null) {
+          exifInterface.setTag(tag);
+      }
+      try {
+          if (imageUri.getScheme().equals("content"))
+          {
+              Log.i(TAG,"Content");
+              exifInterface.forceRewriteExif(getRealPathFromURI(imageUri));
+          } else {
+              Log.i(TAG,"File");
+              exifInterface.forceRewriteExif(imageUri.getPath());
+          }
+      } catch (Exception e) {
+          Log.e(TAG, "forceRewriteExif");
+          e.printStackTrace();
+      }
+  }
+
 }
