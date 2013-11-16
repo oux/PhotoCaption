@@ -53,6 +53,7 @@
         <activity android:name="PhotoCaptionGallery"
             android:label="@string/pc_gallery"
             android:icon="@drawable/photo_caption_a"
+            android:launchMode="singleInstance"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
