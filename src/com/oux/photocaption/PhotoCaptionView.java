@@ -29,6 +29,8 @@ import android.view.MotionEvent;
 import android.app.ActionBar;
 
 
+// Add Zoom, slide and change exifInterface
+
 public class PhotoCaptionView extends Activity
 {
     static final String TAG = "photoCaptionView";

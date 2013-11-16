@@ -10,11 +10,24 @@
     <application android:label="@string/app_name"
         android:icon="@drawable/photo_caption_a"
         android:theme="@android:style/Theme.Holo">
-        <!-- android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"-->
+        <!--
+        TODO:
+        * activity alias to change pc_edit name for launcher
+        * Activity setting:
+            - Path image storage
+        -->
         <activity android:name="PhotoCaptionEdit"
             android:label="@string/pc_edit"
             android:icon="@drawable/photo_caption_a_"
             >
+            <intent-filter>
+                <action android:name="android.media.action.IMAGE_CAPTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

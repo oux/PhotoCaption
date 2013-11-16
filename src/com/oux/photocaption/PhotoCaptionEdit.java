@@ -199,6 +199,7 @@ public class PhotoCaptionEdit extends Activity
 
     public void takePhoto() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        // intent.setClassName("com.android.gallery3d","com.android.camera.CameraActivity");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         File path = Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES);
