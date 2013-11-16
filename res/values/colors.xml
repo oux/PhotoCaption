@@ -1,5 +1,7 @@
 <resources>
     <color name="blue">#00abea</color>
     <color name="white">#ffffff</color>
+    <color name="selection">#00abea</color>
+    <color name="placard">#111</color>
 
 </resources>

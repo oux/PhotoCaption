@@ -95,17 +95,17 @@ public class PhotoCaptionView extends Activity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_capture:
-                intent = new Intent(this,PhotoCaptionEdit.class);
+                intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
                 startActivity(intent);
                 finish();
                 return true;
             case R.id.action_gallery:
-                intent = new Intent(this,PhotoCaptionGallery.class);
+                intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
                 startActivity(intent);
                 finish();
                 return true;
             case R.id.action_edit:
-                intent = new Intent(this,PhotoCaptionEdit.class);
+                intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
                 intent.setAction(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_STREAM, imageUri);
                 intent.setType("image/jpeg");
