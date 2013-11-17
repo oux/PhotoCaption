@@ -12,11 +12,20 @@ import android.widget.GridView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Toast;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.util.Log;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.graphics.Point;
+import android.graphics.Rect;
  
 /**
  *
@@ -24,11 +33,14 @@ import android.util.Log;
  * @author sebastien michel
  *
  */
-public class PhotoCaptionGallery extends Activity implements OnItemClickListener {
+public class PhotoCaptionGallery extends Activity implements OnItemClickListener,OnItemLongClickListener {
     static final String TAG = "photoCaptionGallery";
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
     ActionBar actionBar;
+    // zoom animation
+    private Animator mCurrentAnimator;
+    private int mShortAnimationDuration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +60,32 @@ public class PhotoCaptionGallery extends Activity implements OnItemClickListener
 
         Log.i(TAG, "Creating setOnItemClickListener");
         gridView.setOnItemClickListener(this);
+        gridView.setOnItemLongClickListener(this);
+        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, customGridAdapter.getUri(position), this,PhotoCaptionView.class);
+        Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                customGridAdapter.getUri(position), this,PhotoCaptionView.class);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+        Log.i(TAG, "onItemLongClick:" + v + " pos=" + position + " id=" + id);
+        Intent intent = new Intent(Intent.ACTION_EDIT,
+                customGridAdapter.getUri(position), this,PhotoCaptionEdit.class);
+        startActivity(intent);
+        return true;
+    }
+
+    @Override
+    public void onRestart() {
+        Log.i(TAG, "onRestart");
+        customGridAdapter.notifyDataSetChanged();
+        super.onRestart();
     }
 
     @Override
@@ -86,5 +118,4 @@ public class PhotoCaptionGallery extends Activity implements OnItemClickListener
         return imageItems;
 
     }
-
 }
