@@ -172,10 +172,14 @@ public class PhotoCaptionView extends Activity
 
     void getDescription()
     {
-        try {
-            descriptionView.setText(mExif.getAttribute("UserComment"));
-        } catch (Exception e) {
-            e.printStackTrace();
+        String description = mExif.getAttribute("UserComment");
+        if (description != null)
+        {
+            try {
+                descriptionView.setText(mExif.getAttribute("UserComment"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
