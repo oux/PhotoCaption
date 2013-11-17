@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        >
-        <EditText android:id="@+id/Description"
-            android:layout_weight="1" android:layout_width="match_parent"
-            android:layout_height="match_parent" android:hint=""
-            android:inputType="textMultiLine|textAutoCorrect|textCapSentences"/>
-    </LinearLayout>
     <ImageView
         android:id="@+id/ImageView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:contentDescription=""
+        android:scaleType="matrix"
         />
-</LinearLayout>
+    <EditText android:id="@+id/Description"
+        android:layout_weight="1" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint=""
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:layout_gravity="bottom|center"
+        android:background="@color/placard"
+        android:inputType="textMultiLine|textAutoCorrect|textCapSentences"/>
+</FrameLayout>
 
