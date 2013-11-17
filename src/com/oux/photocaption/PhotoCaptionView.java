@@ -10,17 +10,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
 import android.media.ExifInterface;
-import android.view.View;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 import android.os.Environment;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.database.Cursor;
+import android.view.View;
 import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +35,8 @@ public class PhotoCaptionView extends Activity
     static final String TAG = "photoCaptionView";
     private Uri imageUri;
     TextView descriptionView;
-    ImageView imageView;
+    ImageViewTouch imageView;
+    GridViewAdapter adapter = null;
     ExifInterface mExif;
     ActionBar actionBar;
 
@@ -60,11 +60,12 @@ public class PhotoCaptionView extends Activity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        imageView = (ImageView) findViewById(R.id.ImageView);
+        imageView = (ImageViewTouch) findViewById(R.id.ImageView);
         descriptionView = (TextView)findViewById(R.id.Description);
 
         if (Intent.ACTION_VIEW.equals(action)) {
             imageUri = intent.getData();
+            Log.i(TAG,"Receive Adapter: " + adapter);
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             Log.i(TAG,"Action View:" + intent.getData());
             if (type.startsWith("image/")) {

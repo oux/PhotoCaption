@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
-<TextView
-    android:id="@+id/Description"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text=""
-    />
-<ImageView
+<com.oux.photocaption.ImageViewTouch
     android:id="@+id/ImageView"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:contentDescription=""
+    android:scaleType="matrix"
+    />
+<TextView
+    android:id="@+id/Description"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/ImageView"
+    android:layout_margin="5dp"
+    android:padding="5dp"
+    android:layout_gravity="bottom|center"
+    android:text=""
+    android:background="@color/placard"
     />
 <!--android:background="?attr/selectableItemBackground"
+    android:scaleType="centerInside"
     android:layout_height="wrap_content"
     android:src="@drawable/ic_overflow"
     android:contentDescription="@string/content_open_popup"/-->
-</LinearLayout>
+</FrameLayout>
 

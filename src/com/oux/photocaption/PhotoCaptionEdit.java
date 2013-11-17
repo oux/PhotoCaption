@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Button;
 import android.widget.SpinnerAdapter;
 import android.widget.ArrayAdapter;
@@ -48,7 +48,7 @@ public class PhotoCaptionEdit extends Activity
     static final String TAG = "photoCaptionEdit";
     private Uri imageUri;
     private static int TAKE_PICTURE = 100;
-    TextView descriptionView;
+    EditText descriptionView;
     ImageView imageView;
     File mFile;
     ActionBar actionBar;
@@ -74,14 +74,17 @@ public class PhotoCaptionEdit extends Activity
         String action = intent.getAction();
         String type = intent.getType();
         imageView = (ImageView) findViewById(R.id.ImageView);
-        descriptionView = (TextView)findViewById(R.id.Description);
+        descriptionView = (EditText)findViewById(R.id.Description);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            Log.i(TAG,"Action Edit:" + intent.getData());
+        if (Intent.ACTION_EDIT.equals(action))
+        {
+            imageUri = intent.getData();
+            handleImage();
+        } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 handleImage();
@@ -160,8 +163,6 @@ public class PhotoCaptionEdit extends Activity
         Log.i(TAG,"onResume");
         // Handler h=new H();
         // ResultReceiver rr = new RR(h);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
         // imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT, rr);
     }
 
@@ -256,6 +257,11 @@ public class PhotoCaptionEdit extends Activity
         if (tag != null)
         {
             descriptionView.setText(tag.getValueAsString());
+            Log.i(TAG,"Description view is focusable: " + descriptionView.isFocusable());
+            Log.i(TAG,"Description view is focusableInTouchMode: " + descriptionView.isFocusableInTouchMode());
+            descriptionView.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 

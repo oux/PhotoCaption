@@ -15,4 +15,6 @@
     <string name="gallery">Gallery</string>
     <string name="save">Save</string>
     <string name="capture">Capture</string>
+
+    <string name="adapter">ADAPTER</string>
 </resources>
