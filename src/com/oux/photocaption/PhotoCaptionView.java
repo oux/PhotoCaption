@@ -181,5 +181,9 @@ public class PhotoCaptionView extends Activity
                 e.printStackTrace();
             }
         }
+        else
+        {
+                descriptionView.setVisibility(View.INVISIBLE);
+        }
     }
 }
