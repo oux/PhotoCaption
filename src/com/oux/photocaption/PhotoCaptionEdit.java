@@ -38,6 +38,7 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.view.View;
+import android.graphics.drawable.BitmapDrawable;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
@@ -92,6 +93,19 @@ public class PhotoCaptionEdit extends Activity
         } else {
             takePhoto();
         }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        if (imageView != null)
+        {
+            BitmapDrawable bd = (BitmapDrawable)imageView.getDrawable();
+            if (bd != null)
+                bd.getBitmap().recycle();
+            imageView.setImageBitmap(null);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -239,6 +253,11 @@ public class PhotoCaptionEdit extends Activity
 
     void handleImage() {
         if (imageUri != null) {
+            /*
+            BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inSampleSize = 8;
+            Bitmap preview_bitmap=BitmapFactory.decodeStream(is,null,options);
+            */
             imageView.setImageURI(imageUri);
             getDescription();
         }

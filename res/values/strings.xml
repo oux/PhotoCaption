@@ -16,5 +16,7 @@
     <string name="save">Save</string>
     <string name="capture">Capture</string>
 
+    <string name="type_comment">Type a comment</string>
+
     <string name="adapter">ADAPTER</string>
 </resources>

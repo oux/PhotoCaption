@@ -86,7 +86,9 @@ public class GridViewAdapter extends ArrayAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        cursor.close();
         holder.imageTitle.setText(exif.getAttribute("UserComment"));
+
         holder.image.setImageBitmap(loadThumbnailImage(uri.toString()));
         return row;
     }

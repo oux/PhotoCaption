@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Button;
 import android.database.Cursor;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.app.ActionBar;
+import android.graphics.drawable.BitmapDrawable;
 
 
 // Add Zoom, slide and change exifInterface
@@ -35,7 +37,8 @@ public class PhotoCaptionView extends Activity
     static final String TAG = "photoCaptionView";
     private Uri imageUri;
     TextView descriptionView;
-    ImageViewTouch imageView;
+    ImageView imageView;
+    // ImageViewTouch imageView;
     GridViewAdapter adapter = null;
     ExifInterface mExif;
     ActionBar actionBar;
@@ -60,7 +63,8 @@ public class PhotoCaptionView extends Activity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        imageView = (ImageViewTouch) findViewById(R.id.ImageView);
+        imageView = (ImageView) findViewById(R.id.ImageView);
+        // imageView = (ImageViewTouch) findViewById(R.id.ImageView);
         descriptionView = (TextView)findViewById(R.id.Description);
 
         if (Intent.ACTION_VIEW.equals(action)) {
@@ -83,6 +87,19 @@ public class PhotoCaptionView extends Activity
         } else {
             handleImage(imageUri);
         }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        if (imageView != null)
+        {
+            BitmapDrawable bd = (BitmapDrawable)imageView.getDrawable();
+            if (bd != null)
+                bd.getBitmap().recycle();
+            imageView.setImageBitmap(null);
+        }
+        super.onDestroy();
     }
 
     @Override
