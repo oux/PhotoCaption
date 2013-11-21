@@ -27,19 +27,15 @@ import android.widget.Toast;
 public class GridViewAdapter extends ArrayAdapter {
     private Context mContext;
     private int layoutResourceId;
-    private ArrayList data = new ArrayList();
     private Cursor externalCursor;
     private Uri externalContentUri;
     private int externalColumnIndex;
     static final String TAG = "photoCaptionGridViewAdapter";
 
-    public GridViewAdapter(Context context, int layoutResourceId,
-            ArrayList data) {
-        // TODO: upgrade gridview/adapter when data changed (every onResume ?)
-        super(context, layoutResourceId, data);
+    public GridViewAdapter(Context context, int layoutResourceId) {
+        super(context, layoutResourceId);
         this.layoutResourceId = layoutResourceId;
         this.mContext = context;
-        this.data = data;
         //Do the query
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;        
 
@@ -108,28 +104,6 @@ public class GridViewAdapter extends ArrayAdapter {
         Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
         imageView.setImageBitmap(loadThumbnailImage(uri.toString()));   
         return imageView;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        ViewHolder holder = null;
-
-        if (row == null) {
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new ViewHolder();
-            holder.imageTitle = (TextView) row.findViewById(R.id.text);
-            holder.image = (ImageView) row.findViewById(R.id.image);
-            row.setTag(holder);
-        } else {
-            holder = (ViewHolder) row.getTag();
-        }
-
-        ImageItem item = (ImageItem) data.get(position);
-        holder.imageTitle.setText(item.getTitle());
-        holder.image.setImageBitmap(item.getImage());
-        return row;
     }
     */
 

@@ -248,7 +248,9 @@ public class PhotoCaptionEdit extends Activity
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
+        String ret = cursor.getString(idx);
+        cursor.close();
+        return ret;
     }
 
     void handleImage() {
@@ -288,6 +290,9 @@ public class PhotoCaptionEdit extends Activity
   {
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
+      description = description.replaceAll("[áâã]", "a");
+      description = description.replaceAll("[éèë]", "e");
+      description = description.replaceAll("[ç]", "c");
       ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, description);
       if(tag != null) {
           exifInterface.setTag(tag);

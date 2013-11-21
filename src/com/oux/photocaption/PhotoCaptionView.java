@@ -164,7 +164,9 @@ public class PhotoCaptionView extends Activity
         Cursor cursor = getContentResolver().query(uri, null, null, null, null); 
         cursor.moveToFirst(); 
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA); 
-        return cursor.getString(idx); 
+        String ret = cursor.getString(idx);
+        cursor.close();
+        return ret;
     }
 
     void handleImage(Uri imageUri) {

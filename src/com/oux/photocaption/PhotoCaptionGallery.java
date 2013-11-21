@@ -69,7 +69,7 @@ public class PhotoCaptionGallery extends Activity implements OnItemClickListener
         // gridView = (AutoMeasureGridView) findViewById(R.id.gridView);
 
         // TODO: try to navigate by album (NavigationList).
-        customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, getData());
+        customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
         gridView.setAdapter(customGridAdapter);
         customGridAdapter.notifyDataSetChanged();
 
@@ -122,12 +122,5 @@ public class PhotoCaptionGallery extends Activity implements OnItemClickListener
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private ArrayList getData() {
-        final ArrayList imageItems = new ArrayList();
-
-        return imageItems;
-
     }
 }
