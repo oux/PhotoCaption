@@ -19,4 +19,8 @@
     <string name="type_comment">Type a comment</string>
 
     <string name="adapter">ADAPTER</string>
+    <string name="ask_save_description">Do you want to save your comment ?</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="saved">Your comment has been saved !</string>
 </resources>

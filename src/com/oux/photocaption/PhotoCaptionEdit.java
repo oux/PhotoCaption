@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 // import android.os.ResultReceiver;
 // import android.os.Handler;
 // import android.os.Message;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.content.Intent;
 import android.content.Context;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -145,6 +147,33 @@ public class PhotoCaptionEdit extends Activity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog saveDialog = new AlertDialog.Builder(
+                this).create();
+
+        saveDialog.setTitle("Save");
+        saveDialog.setMessage(getResources().getString(R.string.ask_save_description));
+        saveDialog.setIcon(android.R.drawable.ic_menu_save);
+        saveDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        saveDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                setDescription(descriptionView.getText().toString());
+                Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        saveDialog.show();
     }
 
     /*
