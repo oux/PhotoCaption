@@ -16,8 +16,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.media.ExifInterface;
 import android.widget.Toast;
+import com.oux.loader.ImageLoader;
+import com.oux.loader.ViewHolder;
 
 /**
  *
@@ -31,11 +32,13 @@ public class GridViewAdapter extends ArrayAdapter {
     private Uri externalContentUri;
     private int externalColumnIndex;
     static final String TAG = "photoCaptionGridViewAdapter";
+    private ImageLoader mLoader;
 
     public GridViewAdapter(Context context, int layoutResourceId) {
         super(context, layoutResourceId);
         this.layoutResourceId = layoutResourceId;
         this.mContext = context;
+		mLoader = new ImageLoader(context);
         //Do the query
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;        
 
@@ -58,7 +61,6 @@ public class GridViewAdapter extends ArrayAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         ViewHolder holder = null;
-        ExifInterface exif = null;
 
         if (row == null) {
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -70,59 +72,14 @@ public class GridViewAdapter extends ArrayAdapter {
         } else {
             holder = (ViewHolder) row.getTag();
         }
-        externalCursor.moveToPosition(getCount()-(position+1));
-        int imageID = externalCursor.getInt( externalColumnIndex );
-        Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+		mLoader.DisplayImage(getCount()-(position+1), holder);
+		// mLoader.DisplayImage(getItem(position), holder);
 
-        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null); 
-        cursor.moveToFirst(); 
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA); 
-        try {
-            exif = new ExifInterface(cursor.getString(idx));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        cursor.close();
-        holder.imageTitle.setText(exif.getAttribute("UserComment"));
-
-        holder.image.setImageBitmap(loadThumbnailImage(uri.toString()));
         return row;
-    }
-
-    /*
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
-
-        if (convertView == null) {  // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-        } else {
-            imageView = (ImageView) convertView;
-        }
-        externalCursor.moveToPosition(position);
-        int imageID = externalCursor.getInt( externalColumnIndex );
-        Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
-        imageView.setImageBitmap(loadThumbnailImage(uri.toString()));   
-        return imageView;
-    }
-    */
-
-    static class ViewHolder {
-        TextView imageTitle;
-        ImageView image;
     }
 
     public int getCount() {
         return externalCursor.getCount();
-    }
-
-    protected Bitmap loadThumbnailImage( String url ) {
-        // Get original image ID
-        int originalImageId = Integer.parseInt(url.substring(url.lastIndexOf("/") + 1, url.length()));
-
-        // Get (or create upon demand) the micro thumbnail for the original image.
-        return MediaStore.Images.Thumbnails.getThumbnail(mContext.getContentResolver(),
-                originalImageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
     }
 }
 

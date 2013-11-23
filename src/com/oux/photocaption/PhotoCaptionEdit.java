@@ -290,9 +290,10 @@ public class PhotoCaptionEdit extends Activity
   {
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
-      description = description.replaceAll("[áâã]", "a");
+      description = description.replaceAll("[àáâã]", "a");
       description = description.replaceAll("[éèë]", "e");
       description = description.replaceAll("[ç]", "c");
+      description = description.replaceAll("[ô]", "o");
       ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, description);
       if(tag != null) {
           exifInterface.setTag(tag);
