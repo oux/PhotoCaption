@@ -10,10 +10,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-// import android.widget.AdapterView.OnItemClickListener;
-// import android.widget.AdapterView.OnItemLongClickListener;
-import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
-import com.origamilabs.library.views.StaggeredGridView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+// import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
+// import com.origamilabs.library.views.StaggeredGridView.OnItemLongClickListener;
 import android.widget.Toast;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,21 +37,29 @@ import android.os.Parcelable;
  * @author sebastien michel
  *
  */
-public class PhotoCaptionGallery extends Activity implements OnItemClickListener,OnItemLongClickListener {
+public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemClickListener,
+       AdapterView.OnItemLongClickListener,
+       StaggeredGridView.OnItemClickListener,
+       StaggeredGridView.OnItemLongClickListener {
     static final String TAG = "photoCaptionGallery";
-    private StaggeredGridView gridView;
-    // private AutoMeasureGridView gridView;
+    private int mIndex;
+    private int mTop;
+    private StaggeredGridView sGridView;
+    private GridView gridView;
     private GridViewAdapter customGridAdapter;
     ActionBar actionBar;
     // zoom animation
     private Animator mCurrentAnimator;
     private int mShortAnimationDuration;
+    private boolean mEntireComment;
     Parcelable gridState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gallery);
+
+        mEntireComment = false;
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -59,25 +67,85 @@ public class PhotoCaptionGallery extends Activity implements OnItemClickListener
         actionBar.setSubtitle(R.string.mode_gallery);
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
 
-		gridView = (StaggeredGridView) this.findViewById(R.id.gridView);
-        gridView.setItemMargin(margin); // set the GridView margin
-        gridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
-        
-        //StaggeredAdapter adapter = new StaggeredAdapter(this, R.id.row_grid, getData());
-        
-        // gridView = (GridView) findViewById(R.id.gridView);
-        // gridView = (AutoMeasureGridView) findViewById(R.id.gridView);
-
         // TODO: try to navigate by album (NavigationList).
         customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
-        gridView.setAdapter(customGridAdapter);
+
+        if (mEntireComment)
+        {
+            setContentView(R.layout.staggered_gallery);
+            sGridView = (StaggeredGridView) this.findViewById(R.id.staggeredGridView);
+            if (sGridView != null)
+            {
+                sGridView.setAdapter(customGridAdapter);
+                sGridView.setItemMargin(margin); // set the GridView margin
+                sGridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
+                sGridView.setOnItemClickListener((StaggeredGridView.OnItemClickListener)this);
+                sGridView.setOnItemLongClickListener( (StaggeredGridView.OnItemLongClickListener)this);
+            }
+        }
+        else
+        {
+            setContentView(R.layout.gallery);
+            gridView = (GridView) this.findViewById(R.id.gridView);
+            gridView.setAdapter(customGridAdapter);
+            gridView.setOnItemClickListener((OnItemClickListener)this);
+            gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
+        }
+        
         customGridAdapter.notifyDataSetChanged();
 
-        Log.i(TAG, "Creating setOnItemClickListener");
-        gridView.setOnItemClickListener((OnItemClickListener)this);
-        gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
 
         // mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+    }
+
+    @Override
+    public void onPause() {
+        Log.i(TAG,"onPause");
+        if (mEntireComment)
+        {
+            gridState = sGridView.onSaveInstanceState();
+        }
+        else
+        {
+            mIndex = gridView.getFirstVisiblePosition();
+        }
+        customGridAdapter.clearCache();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        Log.i(TAG,"onResume");
+        customGridAdapter.notifyDataSetChanged();
+        if (mEntireComment)
+            if (gridState != null) sGridView.onRestoreInstanceState(gridState);
+        else
+            if (gridView != null) gridView.smoothScrollToPosition(mIndex);
+        super.onResume();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
+            mIndex = parent.getFirstVisiblePosition();
+            View vv = parent.getChildAt(0);
+            mTop = (vv == null) ? 0 : vv.getTop();
+        Log.i(TAG, "onItemClick:" + mTop + " pos=" + mIndex );
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                customGridAdapter.getUri(position), this,PhotoCaptionView.class);
+        // Bundle b = new Bundle();
+        // b.putParcelable(getResources().getString(R.string.adapter), gridView);
+        // intent.putExtras(b);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+        Log.i(TAG, "onItemLongClick:" + v + " pos=" + position + " id=" + id);
+        Intent intent = new Intent(Intent.ACTION_EDIT,
+                customGridAdapter.getUri(position), this,PhotoCaptionEdit.class);
+        startActivity(intent);
+        return true;
     }
 
     @Override

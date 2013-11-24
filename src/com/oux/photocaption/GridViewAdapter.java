@@ -57,6 +57,16 @@ public class GridViewAdapter extends ArrayAdapter {
         return  Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
     }
 
+    public void clearCache() {
+        mLoader.clearCache();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        mLoader.clearCache();
+        super.notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;

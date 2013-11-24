@@ -26,7 +26,7 @@ public class MemoryCache {
     
     public void setLimit(long new_limit){
         limit=new_limit;
-        Log.i(TAG, "MemoryCache will use up to "+limit/1024./1024.+"MB");
+        // Log.i(TAG, "MemoryCache will use up to "+limit/1024./1024.+"MB");
     }
 
     public Pair<Bitmap,String> get(int id){
@@ -54,7 +54,7 @@ public class MemoryCache {
     }
     
     private void checkSize() {
-        Log.i(TAG, "cache size="+size+" length="+cache.size());
+        // Log.i(TAG, "cache size="+size+" length="+cache.size());
         if(size>limit){
             //least recently accessed item will be the first one iterated  
             Iterator<Entry<Integer, Pair<Bitmap,String>>> iter=cache.entrySet().iterator();
@@ -65,7 +65,7 @@ public class MemoryCache {
                 if(size<=limit)
                     break;
             }
-            Log.i(TAG, "Clean cache. New size "+cache.size());
+            // Log.i(TAG, "Clean cache. New size "+cache.size());
         }
     }
 
@@ -82,6 +82,9 @@ public class MemoryCache {
     long getSizeInBytes(Pair<Bitmap,String> item) {
         if(item==null)
             return 0;
-        return item.first.getRowBytes() * item.first.getHeight() + item.second.length();
+        long size = item.first.getRowBytes() * item.first.getHeight();
+        if (item.second != null)
+            size += item.second.length();
+        return size;
     }
 }
