@@ -15,6 +15,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 // import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 // import com.origamilabs.library.views.StaggeredGridView.OnItemLongClickListener;
 import android.widget.Toast;
+import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
@@ -59,7 +60,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
 
-        mEntireComment = false;
+        mEntireComment = true;
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -68,11 +69,11 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
 
         // TODO: try to navigate by album (NavigationList).
-        customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
 
         if (mEntireComment)
         {
             setContentView(R.layout.staggered_gallery);
+            customGridAdapter = new GridViewAdapter(this, R.layout.staggered_row_grid);
             sGridView = (StaggeredGridView) this.findViewById(R.id.staggeredGridView);
             if (sGridView != null)
             {
@@ -86,16 +87,19 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         else
         {
             setContentView(R.layout.gallery);
+            customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
             gridView = (GridView) this.findViewById(R.id.gridView);
             gridView.setAdapter(customGridAdapter);
             gridView.setOnItemClickListener((OnItemClickListener)this);
             gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
         }
-        
         customGridAdapter.notifyDataSetChanged();
-
-
         // mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     @Override

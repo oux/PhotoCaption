@@ -15,9 +15,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import android.R;
-import android.media.ExifInterface;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -27,6 +25,10 @@ import android.util.Pair;
 import com.oux.loader.MemoryCache;
 import android.net.Uri;
 import android.provider.MediaStore;
+
+import com.android.gallery3d.exif.ExifInterface;
+import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.IfdId;
 
 /**
  * Using LazyList via https://github.com/thest1/LazyList/tree/master/src/com/fedorvlasov/lazylist
@@ -81,7 +83,8 @@ public class ImageLoader {
     
     private Pair<Bitmap, String> getPair(int position) 
     {
-        ExifInterface exif = null;
+        ExifInterface exifInterface = new ExifInterface();
+
         externalCursor.moveToPosition(position);
         int imageID = externalCursor.getInt( externalColumnIndex );
         Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
@@ -89,53 +92,16 @@ public class ImageLoader {
         cursor.moveToFirst(); 
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA); 
         try {
-            exif = new ExifInterface(cursor.getString(idx));
-        } catch (IOException e) {
+            exifInterface.readExif(cursor.getString(idx));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         cursor.close();
-        return new Pair<Bitmap, String>(loadThumbnailImage(uri.toString()), exif.getAttribute("UserComment"));
-    }
-
-    //decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f){
-        try {
-            //decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            FileInputStream stream1=new FileInputStream(f);
-            BitmapFactory.decodeStream(stream1,null,o);
-            stream1.close();
-            
-            //Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE=70;
-            int width_tmp=o.outWidth, height_tmp=o.outHeight;
-            int scale=1;
-            while(true){
-                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
-                    break;
-                width_tmp/=2;
-                height_tmp/=2;
-                scale*=2;
-            }
-            
-            if(scale>=2){
-            	scale/=2;
-            }
-            
-            //decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
-            FileInputStream stream2=new FileInputStream(f);
-            Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
-            stream2.close();
-            return bitmap;
-        } catch (FileNotFoundException e) {
-        } 
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+        String description = null;
+        if (tag != null)
+            description = tag.getValueAsString();
+        return new Pair<Bitmap, String>(loadThumbnailImage(uri.toString()), description);
     }
 
     protected Bitmap loadThumbnailImage( String url ) {

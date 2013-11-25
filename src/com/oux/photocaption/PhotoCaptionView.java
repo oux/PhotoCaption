@@ -3,19 +3,19 @@ package com.oux.photocaption;
 import java.util.Date;
 import java.io.IOException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 import android.os.Environment;
 import android.content.ContentResolver;
-import android.graphics.Bitmap;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
@@ -27,7 +27,13 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.app.ActionBar;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
+
+import com.android.gallery3d.exif.ExifInterface;
+import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.IfdId;
 
 
 // Add Zoom, slide and change exifInterface
@@ -40,7 +46,7 @@ public class PhotoCaptionView extends Activity
     ImageView imageView;
     // ImageViewTouch imageView;
     GridViewAdapter adapter = null;
-    ExifInterface mExif;
+    // ExifInterface mExif;
     ActionBar actionBar;
 
     /** Called when the activity is first created. */
@@ -172,37 +178,44 @@ public class PhotoCaptionView extends Activity
     void handleImage(Uri imageUri) {
         if (imageUri != null) {
             Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
-            imageView.setImageURI(imageUri);
-            openExif(imageUri);
-            getDescription();
-        }
-    }
+            Bitmap preview_bitmap = null;
+            try {
+                File image = null;
+                if (imageUri.getScheme().equals("content")) 
+                    image = new File(getRealPathFromURI(imageUri));
+                else
+                    image = new File(imageUri.getPath());
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize = 8;
+                preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
+                imageView.setImageBitmap(preview_bitmap);
+                getDescription();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-    void openExif(Uri imageUri)
-    {
-        try {
-            mExif = new ExifInterface(imageUri.getPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error during loading Exif", 
-                    Toast.LENGTH_LONG).show();
         }
     }
 
     void getDescription()
     {
-        String description = mExif.getAttribute("UserComment");
-        if (description != null)
-        {
-            try {
-                descriptionView.setText(mExif.getAttribute("UserComment"));
-            } catch (Exception e) {
-                e.printStackTrace();
+        ExifInterface exifInterface = new ExifInterface();
+        try {
+            exifInterface.readExif(getContentResolver().openInputStream(imageUri));
+            ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+            if (tag != null)
+            {
+                String description = tag.getValueAsString();
+                Log.i(TAG, "image description=<" + description + ">");
+                if (description != "")
+                {
+                    descriptionView.setText(description);
+                    return;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        else
-        {
-                descriptionView.setVisibility(View.INVISIBLE);
-        }
+        descriptionView.setVisibility(View.INVISIBLE);
     }
 }

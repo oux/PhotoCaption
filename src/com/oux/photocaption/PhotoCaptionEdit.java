@@ -1,12 +1,13 @@
 package com.oux.photocaption;
 
 import java.util.Date;
-// import java.io.FileInputStream;
 // import java.io.OutputStream;
 // import java.io.BufferedOutputStream;
 // import java.io.FileOutputStream;
 import java.io.File;
 // import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 
 import android.app.Activity;
@@ -40,7 +41,9 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.view.View;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
@@ -284,13 +287,23 @@ public class PhotoCaptionEdit extends Activity
 
     void handleImage() {
         if (imageUri != null) {
-            /*
-            BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inSampleSize = 8;
-            Bitmap preview_bitmap=BitmapFactory.decodeStream(is,null,options);
-            */
-            imageView.setImageURI(imageUri);
-            getDescription();
+            Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
+            Bitmap preview_bitmap = null;
+            try {
+                File image = null;
+                if (imageUri.getScheme().equals("content")) 
+                    image = new File(getRealPathFromURI(imageUri));
+                else
+                    image = new File(imageUri.getPath());
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize = 8;
+                preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
+                imageView.setImageBitmap(preview_bitmap);
+                getDescription();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

@@ -76,15 +76,13 @@ public class GridViewAdapter extends ArrayAdapter {
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
-            holder.imageTitle = (TextView) row.findViewById(R.id.text);
+            holder.imageTitle = (TextView) row.findViewById(R.id.caption_preview);
             holder.image = (ImageView) row.findViewById(R.id.image);
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
         }
 		mLoader.DisplayImage(getCount()-(position+1), holder);
-		// mLoader.DisplayImage(getItem(position), holder);
-
         return row;
     }
 

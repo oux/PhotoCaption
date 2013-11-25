@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription=""
-        android:scaleType="matrix"
         />
         <EditText android:id="@+id/Description"
             android:layout_weight="1"
