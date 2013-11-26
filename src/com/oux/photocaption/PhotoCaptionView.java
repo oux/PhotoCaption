@@ -35,6 +35,15 @@ import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.IfdId;
 
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+
+import uk.co.senab.photoview.PhotoView;
+// For Adapter:
+import android.provider.MediaStore;
+import android.content.Context;
 
 // Add Zoom, slide and change exifInterface
 
@@ -43,11 +52,11 @@ public class PhotoCaptionView extends Activity
     static final String TAG = "photoCaptionView";
     private Uri imageUri;
     TextView descriptionView;
-    MyImageView imageView;
-    // ImageViewTouch imageView;
+    // MyImageView imageView;
     GridViewAdapter adapter = null;
-    // ExifInterface mExif;
     ActionBar actionBar;
+    ViewPager mViewPager;
+    int mPosition;
 
     /** Called when the activity is first created. */
     @Override
@@ -69,35 +78,149 @@ public class PhotoCaptionView extends Activity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        imageView = (MyImageView) findViewById(R.id.ImageView);
+        // imageView = (MyImageView) findViewById(R.id.ImageView);
+        mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
+
+        SamplePagerAdapter samplePagerAdapter = new SamplePagerAdapter();
+        samplePagerAdapter.setContext(this);
+		mViewPager.setAdapter(samplePagerAdapter);
         // imageView = (ImageViewTouch) findViewById(R.id.ImageView);
         descriptionView = (TextView)findViewById(R.id.Description);
 
-        if (Intent.ACTION_VIEW.equals(action)) {
-            imageUri = intent.getData();
-            Log.i(TAG,"Receive Adapter: " + adapter);
-        } else if (Intent.ACTION_SEND.equals(action) && type != null) {
-            Log.i(TAG,"Action View:" + intent.getData());
-            if (type.startsWith("image/")) {
-                imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            }
-        } else {
-            finish();
-        }
-        if (imageUri.getScheme().equals("content")) 
+        mPosition = intent.getIntExtra("position",-1);
+
+        if (mPosition != -1)
         {
-            Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" +
-                    intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
-            File image = new File(getRealPathFromURI(imageUri));
-            handleImage(Uri.fromFile(image));
-        } else {
-            handleImage(imageUri);
+            Log.i(TAG,"new position: " + mPosition);
+            mViewPager.setCurrentItem(mPosition);
         }
+        else
+        {
+            if (Intent.ACTION_VIEW.equals(action)) {
+                imageUri = intent.getData();
+                Log.i(TAG,"Receive Adapter: " + adapter);
+            } else if (Intent.ACTION_SEND.equals(action) && type != null) {
+                Log.i(TAG,"Action View:" + intent.getData());
+                if (type.startsWith("image/")) {
+                    imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                }
+            } else {
+                finish();
+            }
+            if (imageUri.getScheme().equals("content"))
+            {
+                Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" +
+                        intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
+                File image = new File(getRealPathFromURI(imageUri));
+                handleImage(Uri.fromFile(image));
+            } else {
+                handleImage(imageUri);
+            }
+        }
+    }
+
+    static class SamplePagerAdapter extends PagerAdapter {
+
+        private PhotoCaptionView mContext;
+        private int layoutResourceId;
+        private Cursor externalCursor;
+        private Uri externalContentUri;
+        private int externalColumnIndex;
+        static final String TAG = "photoCaptionGridViewAdapter";
+
+        public void setContext(PhotoCaptionView context) {
+            mContext = context;
+            //Do the query
+            externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+            String[] projection = {MediaStore.Images.Media._ID};
+            String selection = "";
+            String [] selectionArgs = null;
+            externalCursor = mContext.getContentResolver().query(
+                    externalContentUri,projection,selection,selectionArgs,null);
+            externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+        }
+
+        @Override
+        public int getCount() {
+            return externalCursor.getCount();
+        }
+
+        @Override
+        public View instantiateItem(ViewGroup container, int position) {
+            Log.i(TAG,"VIEW:" + position + ", container:" + container
+                    + ", context:" + container.getContext() + ", mContext:" + mContext);
+            PhotoView photoView = new PhotoView(container.getContext());
+
+            ExifInterface exifInterface = new ExifInterface();
+            Bitmap preview_bitmap = null;
+
+            externalCursor.moveToPosition(getCount()-(position+1));
+            int imageID = externalCursor.getInt( externalColumnIndex );
+            Uri imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+            try {
+                exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+            String description = null;
+            if (tag != null)
+                description = tag.getValueAsString();
+            try {
+                File image = null;
+                if (imageUri.getScheme().equals("content"))
+                {
+                    Log.i(TAG,"Content");
+                    image = new File(getRealPathFromURI(imageUri));
+                }
+                else
+                    image = new File(imageUri.getPath());
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize = 8;
+                preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
+                photoView.setImageBitmap(preview_bitmap);
+                if (description != "")
+                    mContext.descriptionView.setText(description);
+                else
+                    mContext.descriptionView.setVisibility(View.INVISIBLE);
+
+                // Now just add PhotoView to ViewPager and return it
+                container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            return photoView;
+        }
+
+        public String getRealPathFromURI(Uri uri) {
+            Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            String ret = cursor.getString(idx);
+            cursor.close();
+            return ret;
+        }
+
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
     }
 
     @Override
     public void onDestroy()
     {
+        /*
         if (imageView != null)
         {
             BitmapDrawable bd = (BitmapDrawable)imageView.getDrawable();
@@ -105,6 +228,7 @@ public class PhotoCaptionView extends Activity
                 bd.getBitmap().recycle();
             imageView.setImageBitmap(null);
         }
+        */
         super.onDestroy();
     }
 
@@ -160,16 +284,16 @@ public class PhotoCaptionView extends Activity
 
     public void sharePhoto() {
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND,
-                Uri.parse("file:///sdcard/image.png")); 
+                Uri.parse("file:///sdcard/image.png"));
         shareIntent.setType("image/png");
-        this.setResult(Activity.RESULT_OK, shareIntent); 
+        this.setResult(Activity.RESULT_OK, shareIntent);
         this.finish();
     }
 
     public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null); 
-        cursor.moveToFirst(); 
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA); 
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         String ret = cursor.getString(idx);
         cursor.close();
         return ret;
@@ -181,14 +305,14 @@ public class PhotoCaptionView extends Activity
             Bitmap preview_bitmap = null;
             try {
                 File image = null;
-                if (imageUri.getScheme().equals("content")) 
+                if (imageUri.getScheme().equals("content"))
                     image = new File(getRealPathFromURI(imageUri));
                 else
                     image = new File(imageUri.getPath());
                 BitmapFactory.Options options=new BitmapFactory.Options();
                 options.inSampleSize = 8;
                 preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
-                imageView.setImageBitmap(preview_bitmap);
+                // imageView.setImageBitmap(preview_bitmap);
                 getDescription();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

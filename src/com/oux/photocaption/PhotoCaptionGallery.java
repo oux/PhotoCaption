@@ -131,15 +131,14 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
-            mIndex = parent.getFirstVisiblePosition();
-            View vv = parent.getChildAt(0);
-            mTop = (vv == null) ? 0 : vv.getTop();
+        // Backup Grid position
+        mIndex = parent.getFirstVisiblePosition();
+        View vv = parent.getChildAt(0);
+        mTop = (vv == null) ? 0 : vv.getTop();
+
         Log.i(TAG, "onItemClick:" + mTop + " pos=" + mIndex );
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                customGridAdapter.getUri(position), this,PhotoCaptionView.class);
-        // Bundle b = new Bundle();
-        // b.putParcelable(getResources().getString(R.string.adapter), gridView);
-        // intent.putExtras(b);
+        Intent intent = new Intent(this,PhotoCaptionView.class);
+        intent.putExtra("position",position);
         startActivity(intent);
     }
 
@@ -155,11 +154,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     @Override
     public void onItemClick(StaggeredGridView parent, View v, int position, long id) {
         Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                customGridAdapter.getUri(position), this,PhotoCaptionView.class);
-        // Bundle b = new Bundle();
-        // b.putParcelable(getResources().getString(R.string.adapter), gridView);
-        // intent.putExtras(b);
+        Intent intent = new Intent(this,PhotoCaptionView.class);
+        intent.putExtra("position",position);
         startActivity(intent);
     }
 
