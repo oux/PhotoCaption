@@ -43,7 +43,7 @@ public class PhotoCaptionView extends Activity
     static final String TAG = "photoCaptionView";
     private Uri imageUri;
     TextView descriptionView;
-    ImageView imageView;
+    MyImageView imageView;
     // ImageViewTouch imageView;
     GridViewAdapter adapter = null;
     // ExifInterface mExif;
@@ -69,7 +69,7 @@ public class PhotoCaptionView extends Activity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        imageView = (ImageView) findViewById(R.id.ImageView);
+        imageView = (MyImageView) findViewById(R.id.ImageView);
         // imageView = (ImageViewTouch) findViewById(R.id.ImageView);
         descriptionView = (TextView)findViewById(R.id.Description);
 

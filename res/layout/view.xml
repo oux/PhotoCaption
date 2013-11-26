@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-<ImageView
+<com.oux.photocaption.MyImageView
     android:id="@+id/ImageView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,6 +21,7 @@
     android:background="@color/placard"
     />
 <!--
+    android:scaleType="matrix"
 <com.oux.photocaption.ImageViewTouch
 android:background="?attr/selectableItemBackground"
     android:scaleType="centerInside"
