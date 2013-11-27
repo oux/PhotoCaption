@@ -92,7 +92,7 @@ public class PhotoCaptionView extends Activity
         if (mPosition != -1)
         {
             Log.i(TAG,"new position: " + mPosition);
-            mViewPager.setCurrentItem(mPosition);
+            mViewPager.setCurrentItem(mPosition,false);
         }
         else
         {
@@ -109,10 +109,11 @@ public class PhotoCaptionView extends Activity
             }
             if (imageUri.getScheme().equals("content"))
             {
-                Log.i(TAG,"VIEW: Uri1:" + imageUri + " uri2:" +
-                        intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT));
-                File image = new File(getRealPathFromURI(imageUri));
-                handleImage(Uri.fromFile(image));
+                Log.i(TAG,"VIEW: Uri1:" + imageUri
+                        + " uri2:"
+                        + samplePagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue()));
+                mPosition = samplePagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue());
+                mViewPager.setCurrentItem(samplePagerAdapter.getCount() - mPosition-1,false);
             } else {
                 handleImage(imageUri);
             }
@@ -126,7 +127,7 @@ public class PhotoCaptionView extends Activity
         private Cursor externalCursor;
         private Uri externalContentUri;
         private int externalColumnIndex;
-        static final String TAG = "photoCaptionGridViewAdapter";
+        static final String TAG = "photoCaptionPagerAdapter";
 
         public void setContext(PhotoCaptionView context) {
             mContext = context;
@@ -139,6 +140,20 @@ public class PhotoCaptionView extends Activity
             externalCursor = mContext.getContentResolver().query(
                     externalContentUri,projection,selection,selectionArgs,null);
             externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+        }
+
+        public int getPosition(int id) {
+            //Do the query
+            String[] projection = {MediaStore.Images.Media._ID};
+            String selection = "_ID = ?";
+            String [] selectionArgs = {String.valueOf(id)};
+            externalCursor.moveToFirst();
+            while (externalCursor.getInt(externalColumnIndex) != id)
+            {
+                externalCursor.moveToNext();
+            }
+            Log.i(TAG,"getPosition: position:" + externalCursor.getPosition());
+            return externalCursor.getPosition();
         }
 
         @Override
@@ -158,6 +173,8 @@ public class PhotoCaptionView extends Activity
             externalCursor.moveToPosition(getCount()-(position+1));
             int imageID = externalCursor.getInt( externalColumnIndex );
             Uri imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+
+            Log.i(TAG,"Id:" + imageID + ", imageUri:" + imageUri);
             try {
                 exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
             } catch (Exception e) {
@@ -169,17 +186,15 @@ public class PhotoCaptionView extends Activity
             if (tag != null)
                 description = tag.getValueAsString();
             try {
-                File image = null;
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize = 8;
                 if (imageUri.getScheme().equals("content"))
                 {
                     Log.i(TAG,"Content");
-                    image = new File(getRealPathFromURI(imageUri));
+                    preview_bitmap=BitmapFactory.decodeFile(getRealPathFromURI(imageUri),options);
                 }
                 else
-                    image = new File(imageUri.getPath());
-                BitmapFactory.Options options=new BitmapFactory.Options();
-                options.inSampleSize = 8;
-                preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
+                    preview_bitmap=BitmapFactory.decodeFile(imageUri.getPath(),options);
                 photoView.setImageBitmap(preview_bitmap);
                 if (description != "")
                     mContext.descriptionView.setText(description);
@@ -188,7 +203,7 @@ public class PhotoCaptionView extends Activity
 
                 // Now just add PhotoView to ViewPager and return it
                 container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
