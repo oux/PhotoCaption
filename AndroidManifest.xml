@@ -19,6 +19,7 @@
         <activity android:name="PhotoCaptionEdit"
             android:label="@string/pc_edit"
             android:icon="@drawable/photo_caption_a_"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
             >
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
