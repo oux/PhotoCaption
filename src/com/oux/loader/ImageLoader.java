@@ -36,7 +36,7 @@ import com.android.gallery3d.exif.IfdId;
  * I barely modified this file
  */
 public class ImageLoader {
-    
+
     MemoryCache memoryCache=new MemoryCache();
     private Context mContext;
     private Map<ViewHolder, Integer> imageViews = Collections.synchronizedMap(
@@ -44,21 +44,14 @@ public class ImageLoader {
     ExecutorService executorService;
     Handler handler=new Handler();//handler to display images in UI thread
     private Uri externalContentUri;
-    private Cursor externalCursor;
     private int externalColumnIndex;
-    
+
     public ImageLoader(Context context){
         mContext = context;
-        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;        
+        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         executorService=Executors.newFixedThreadPool(5);
-        String[] projection = {MediaStore.Images.Media._ID}; 
-        String selection = "";
-        String [] selectionArgs = null;
-        externalCursor = mContext.getContentResolver().query(
-            externalContentUri,projection,selection,selectionArgs,null); 
-        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
     }
-    
+
     public void DisplayImage(int position, ViewHolder holder)
     {
         imageViews.put(holder, position);
@@ -74,23 +67,31 @@ public class ImageLoader {
             holder.image.setImageDrawable(null);
         }
     }
-        
+
     private void queuePhoto(int position, ViewHolder holder)
     {
         PhotoToLoad p=new PhotoToLoad(position, holder);
         executorService.submit(new PhotosLoader(p));
     }
-    
-    private Pair<Bitmap, String> getPair(int position) 
+
+    private Pair<Bitmap, String> getPair(int position)
     {
         ExifInterface exifInterface = new ExifInterface();
 
+        String[] projection = {MediaStore.Images.Media._ID};
+        String selection = "";
+        String [] selectionArgs = null;
+        Cursor externalCursor = mContext.getContentResolver().query(
+            externalContentUri,projection,selection,selectionArgs,null);
+        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+
         externalCursor.moveToPosition(position);
         int imageID = externalCursor.getInt( externalColumnIndex );
+        externalCursor.close();
         Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
-        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null); 
-        cursor.moveToFirst(); 
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA); 
+        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         try {
             exifInterface.readExif(cursor.getString(idx));
         } catch (Exception e) {
@@ -112,24 +113,24 @@ public class ImageLoader {
         return MediaStore.Images.Thumbnails.getThumbnail(mContext.getContentResolver(),
                 originalImageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
     }
-    
+
     //Task for the queue
     private class PhotoToLoad
     {
         public int position;
         public ViewHolder holder;
         public PhotoToLoad(int p, ViewHolder i){
-            position=p; 
+            position=p;
             holder=i;
         }
     }
-    
+
     class PhotosLoader implements Runnable {
         PhotoToLoad photoToLoad;
         PhotosLoader(PhotoToLoad photoToLoad){
             this.photoToLoad=photoToLoad;
         }
-        
+
         @Override
         public void run() {
             try{
@@ -146,14 +147,14 @@ public class ImageLoader {
             }
         }
     }
-    
+
     boolean imageViewReused(PhotoToLoad photoToLoad){
         Integer tag=imageViews.get(photoToLoad.holder);
         if(tag==null || tag != photoToLoad.position)
             return true;
         return false;
     }
-    
+
     //Used to display bitmap in the UI thread
     class BitmapDisplayer implements Runnable
     {
