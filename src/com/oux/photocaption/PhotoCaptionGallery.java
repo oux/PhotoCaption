@@ -43,8 +43,6 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
        StaggeredGridView.OnItemClickListener,
        StaggeredGridView.OnItemLongClickListener {
     static final String TAG = "photoCaptionGallery";
-    private int mIndex;
-    private int mTop;
     private StaggeredGridView sGridView;
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
@@ -107,14 +105,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     public void onPause() {
         Log.i(TAG,"onPause");
         if (mEntireComment)
-        {
             gridState = sGridView.onSaveInstanceState();
-        }
-        else
-        {
-            mIndex = gridView.getFirstVisiblePosition();
-        }
-        customGridAdapter.clearCache();
         super.onPause();
     }
 
@@ -124,20 +115,12 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         customGridAdapter.notifyDataSetChanged();
         if (mEntireComment)
             if (gridState != null) sGridView.onRestoreInstanceState(gridState);
-        else
-            if (gridView != null) gridView.smoothScrollToPosition(mIndex);
         super.onResume();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
-        // Backup Grid position
-        mIndex = parent.getFirstVisiblePosition();
-        View vv = parent.getChildAt(0);
-        mTop = (vv == null) ? 0 : vv.getTop();
-
-        Log.i(TAG, "onItemClick:" + mTop + " pos=" + mIndex );
         Intent intent = new Intent(this,PhotoCaptionView.class);
         intent.putExtra("position",position);
         startActivity(intent);
