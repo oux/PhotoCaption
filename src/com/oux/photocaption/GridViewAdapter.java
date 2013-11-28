@@ -39,14 +39,14 @@ public class GridViewAdapter extends ArrayAdapter {
         this.layoutResourceId = layoutResourceId;
         this.mContext = context;
 		mLoader = new ImageLoader(context);
-        //Do the query
-        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;        
 
-        String[] projection = {MediaStore.Images.Media._ID}; 
+        // Make a first query
+        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.Images.Media._ID};
         String selection = "";
         String [] selectionArgs = null;
         externalCursor = mContext.getContentResolver().query(
-            externalContentUri,projection,selection,selectionArgs,null); 
+            externalContentUri,projection,selection,selectionArgs,null);
         externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
     }
 
@@ -57,12 +57,17 @@ public class GridViewAdapter extends ArrayAdapter {
         return  Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
     }
 
-    public void clearCache() {
-        mLoader.clearCache();
-    }
-
     @Override
     public void notifyDataSetChanged() {
+        // Make again the query to take into account adds and deletes
+        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.Images.Media._ID};
+        String selection = "";
+        String [] selectionArgs = null;
+        externalCursor = mContext.getContentResolver().query(
+            externalContentUri,projection,selection,selectionArgs,null);
+        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+
         mLoader.clearCache();
         super.notifyDataSetChanged();
     }
