@@ -133,15 +133,10 @@ public class PhotoCaptionEdit extends Activity
         if (Intent.ACTION_EDIT.equals(action))
         {
             imageUri = intent.getData();
-            mInitialDescription = getDescription();
-            descriptionView.setText(mInitialDescription);
             handleImage();
-            // descriptionView.requestFocus();
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                mInitialDescription = getDescription();
-                descriptionView.setText(mInitialDescription);
                 handleImage();
             }
         } else {
@@ -286,6 +281,8 @@ public class PhotoCaptionEdit extends Activity
                 options.inSampleSize = 8;
                 preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
                 imageView.setImageBitmap(preview_bitmap);
+                mInitialDescription = getDescription();
+                descriptionView.setText(mInitialDescription);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
