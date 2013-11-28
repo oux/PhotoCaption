@@ -47,12 +47,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
     ActionBar actionBar;
-    // zoom animation
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
     private boolean mEntireComment;
     Parcelable gridState;
-    // TODO: debug cursor on ContentProvider.delete()
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +89,6 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
             gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
         }
         customGridAdapter.notifyDataSetChanged();
-        // mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
     }
 
     @Override
