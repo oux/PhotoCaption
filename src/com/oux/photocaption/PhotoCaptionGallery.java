@@ -54,6 +54,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     private int mShortAnimationDuration;
     private boolean mEntireComment;
     Parcelable gridState;
+    // TODO: debug cursor on ContentProvider.delete()
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

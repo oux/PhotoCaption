@@ -13,8 +13,14 @@
         android:showAsAction="ifRoom|withText"
         />
     <item
-        android:id="@+id/action_view"
-        android:title="@string/view"
+        android:id="@+id/action_del"
+        android:title="@string/delete"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:showAsAction="always"
+        />
+    <item
+        android:id="@+id/action_cancel"
+        android:title="@string/cancel"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         android:showAsAction="always"
         />

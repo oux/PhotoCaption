@@ -53,12 +53,15 @@ public class PhotoCaptionEdit extends Activity
 {
     static final String TAG = "photoCaptionEdit";
     private Uri imageUri;
+    private String mInitialDescription;
     private static int TAKE_PICTURE = 100;
     EditText descriptionView;
     ImageView imageView;
     File mFile;
     ActionBar actionBar;
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
+    AlertDialog saveDialog;
+    AlertDialog deleteDialog;
 
     /** Called when the activity is first created. */
     @Override
@@ -81,18 +84,64 @@ public class PhotoCaptionEdit extends Activity
         String type = intent.getType();
         imageView = (ImageView) findViewById(R.id.ImageView);
         descriptionView = (EditText)findViewById(R.id.Description);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
+        saveDialog = new AlertDialog.Builder(
+                this).create();
+
+        saveDialog.setTitle(getResources().getString(R.string.save));
+        saveDialog.setMessage(getResources().getString(R.string.ask_save_description));
+        saveDialog.setIcon(android.R.drawable.ic_menu_save);
+        saveDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                getResources().getString(R.string.donotsave), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        saveDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                setDescription(descriptionView.getText().toString());
+                Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+
+        deleteDialog = new AlertDialog.Builder(
+                this).create();
+
+        deleteDialog.setTitle(getResources().getString(R.string.delete));
+        deleteDialog.setMessage(getResources().getString(R.string.ask_delete_image));
+        deleteDialog.setIcon(android.R.drawable.ic_menu_delete);
+        deleteDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                getResources().getString(R.string.donotdelete), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //finish();
+            }
+        });
+        deleteDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+                getContentResolver().delete(imageUri,null,null);
+                finish();
+            }
+        });
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
         if (Intent.ACTION_EDIT.equals(action))
         {
             imageUri = intent.getData();
+            mInitialDescription = getDescription();
+            descriptionView.setText(mInitialDescription);
             handleImage();
+            // descriptionView.requestFocus();
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                mInitialDescription = getDescription();
+                descriptionView.setText(mInitialDescription);
                 handleImage();
             }
         } else {
@@ -127,10 +176,14 @@ public class PhotoCaptionEdit extends Activity
             case R.id.action_capture:
                 takePhoto();
                 return true;
-            case R.id.action_view:
-                intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
-                startActivity(intent);
-                finish();
+            case R.id.action_del:
+                deleteDialog.show();
+                return true;
+            case R.id.action_cancel:
+                if (mInitialDescription.equals(descriptionView.getText().toString()))
+                    finish();
+                else
+                    saveDialog.show();
                 return true;
             case R.id.action_gallery:
                 intent = new Intent(this,PhotoCaptionGallery.class);
@@ -139,8 +192,6 @@ public class PhotoCaptionEdit extends Activity
                 return true;
             case R.id.action_save:
                 setDescription(descriptionView.getText().toString());
-                intent = new Intent(Intent.ACTION_VIEW, imageUri, this,PhotoCaptionView.class);
-                startActivity(intent);
                 finish();
                 return true;
             case android.R.id.home:
@@ -154,74 +205,17 @@ public class PhotoCaptionEdit extends Activity
 
     @Override
     public void onBackPressed() {
-
-        AlertDialog saveDialog = new AlertDialog.Builder(
-                this).create();
-
-        saveDialog.setTitle("Save");
-        saveDialog.setMessage(getResources().getString(R.string.ask_save_description));
-        saveDialog.setIcon(android.R.drawable.ic_menu_save);
-        saveDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        saveDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                setDescription(descriptionView.getText().toString());
-                Toast.makeText(getApplicationContext(),
-                    getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
-        saveDialog.show();
+        if (mInitialDescription.equals(descriptionView.getText().toString()))
+            finish();
+        else
+            saveDialog.show();
     }
-
-    /*
-    public class H extends Handler
-    {
-        public void handleMessage(Message msg) {
-            Log.i(TAG,"Receive Result: " + msg);
-        }
-    }
-
-    public class RR extends ResultReceiver
-    {
-        public void RR (Handler handler)
-        {
-            Log.i(TAG,"Constructor");
-            super(handler);
-        }
-
-        @Override
-        public void onReceiveResult(int resultCode, Bundle resultData)
-        {
-            Log.i(TAG,"Receive Result: " + resultCode);
-        }
-    }
-     */
 
     @Override
     public void onResume() {
         super.onResume();
+        // TODO: restore last edittext content
         Log.i(TAG,"onResume");
-        // Handler h=new H();
-        // ResultReceiver rr = new RR(h);
-        // imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT, rr);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (actionBar.isShowing()) {
-                actionBar.hide();
-            } else {
-                actionBar.show();
-            }
-        }
-        return true;
     }
 
     @Override
@@ -229,13 +223,6 @@ public class PhotoCaptionEdit extends Activity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TAKE_PICTURE) {
             if (resultCode == Activity.RESULT_OK) {
-                /* behave bad:
-                try {
-                    MediaStore.Images.Media.insertImage(getContentResolver(), imageUri.getPath(), "ceci est le titre" , "ceci est une description");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                */
                 scanMedia(imageUri.getPath());
                 handleImage();
             } else {
@@ -246,7 +233,7 @@ public class PhotoCaptionEdit extends Activity
 
     public void takePhoto() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        // intent.setClassName("com.android.gallery3d","com.android.camera.CameraActivity");
+        intent.setClassName("com.android.gallery3d","com.android.camera.CameraActivity");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         File path = Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES);
@@ -299,7 +286,6 @@ public class PhotoCaptionEdit extends Activity
                 options.inSampleSize = 8;
                 preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
                 imageView.setImageBitmap(preview_bitmap);
-                getDescription();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -308,7 +294,7 @@ public class PhotoCaptionEdit extends Activity
     }
 
 
-    void getDescription()
+    String getDescription()
     {
         ExifInterface exifInterface = new ExifInterface();
         try {
@@ -319,13 +305,9 @@ public class PhotoCaptionEdit extends Activity
         ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
         if (tag != null)
         {
-            descriptionView.setText(tag.getValueAsString());
-            Log.i(TAG,"Description view is focusable: " + descriptionView.isFocusable());
-            Log.i(TAG,"Description view is focusableInTouchMode: " + descriptionView.isFocusableInTouchMode());
-            descriptionView.requestFocus();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(descriptionView, InputMethodManager.SHOW_IMPLICIT);
+            return tag.getValueAsString();
         }
+        return "";
     }
 
   void setDescription(String description)

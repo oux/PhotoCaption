@@ -11,7 +11,8 @@
     <string name="pc_gallery">PC Gallery</string>
     
     <string name="edit">Edit</string>
-    <string name="view">View</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string name="gallery">Gallery</string>
     <string name="save">Save</string>
     <string name="capture">Capture</string>
@@ -20,7 +21,9 @@
 
     <string name="adapter">ADAPTER</string>
     <string name="ask_save_description">Do you want to save your comment ?</string>
-    <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
+    <string name="ask_delete_image">Do you really want to delete this image ?</string>
+    <string name="donotsave">Don\'t save</string>
+    <string name="donotdelete">Don\'t delete</string>
     <string name="saved">Your comment has been saved !</string>
+    <string name="deleted">The image has been deleted !</string>
 </resources>
