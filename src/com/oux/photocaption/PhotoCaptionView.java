@@ -35,6 +35,7 @@ public class PhotoCaptionView extends Activity
     GridViewAdapter adapter = null;
     ActionBar actionBar;
     ViewPager mViewPager;
+    PhotoCaptionPagerAdapter mPagerAdapter;
     int mPosition;
 
     /** Called when the activity is first created. */
@@ -59,9 +60,9 @@ public class PhotoCaptionView extends Activity
         String type = intent.getType();
         mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
 
-        PhotoCaptionPagerAdapter pagerAdapter = new PhotoCaptionPagerAdapter();
-        pagerAdapter.setContext(this);
-		mViewPager.setAdapter(pagerAdapter);
+        mPagerAdapter = new PhotoCaptionPagerAdapter();
+        mPagerAdapter.setContext(this);
+		mViewPager.setAdapter(mPagerAdapter);
 
         mPosition = intent.getIntExtra("position",-1);
 
@@ -87,8 +88,8 @@ public class PhotoCaptionView extends Activity
             {
                 Log.i(TAG,"VIEW: Uri1:" + imageUri
                         + " uri2:"
-                        + pagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue()));
-                mPosition = pagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue());
+                        + mPagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue()));
+                mPosition = mPagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue());
                 mViewPager.setCurrentItem(mPosition,false);
             } else {
                 Log.i(TAG,"To be implemented: Uri1:" + imageUri);
@@ -136,8 +137,9 @@ public class PhotoCaptionView extends Activity
                 return true;
             case R.id.action_edit:
                 intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
+                Log.i(TAG,"Current:" + mViewPager.getCurrentItem());
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                intent.putExtra(Intent.EXTRA_STREAM, mPagerAdapter.getUri(mViewPager.getCurrentItem()));
                 intent.setType("image/jpeg");
                 startActivity(intent);
                 finish();

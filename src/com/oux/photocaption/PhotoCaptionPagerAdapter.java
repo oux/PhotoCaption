@@ -42,6 +42,12 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
     }
 
+    public Uri getUri(int position) {
+        externalCursor.moveToPosition(getCount()-(position+1));
+        int imageID = externalCursor.getInt( externalColumnIndex );
+        return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+    }
+
     public int getPosition(int id) {
         //Do the query
         String[] projection = {MediaStore.Images.Media._ID};
