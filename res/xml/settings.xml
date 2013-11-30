@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/gallery"
+        android:key="gallery">
+        <CheckBoxPreference
+            android:key="pref_gallery_whole_caption"
+            android:title="@string/pref_gallery_whole_caption"
+            android:summary="@string/pref_gallery_whole_caption_summ"
+            android:defaultValue="false" 
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

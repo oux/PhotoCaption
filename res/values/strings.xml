@@ -7,8 +7,9 @@
     <string name="mode_gallery">Gallery Mode</string>
 
     <string name="pc_edit">PC Edit</string>
-    <string name="pc_view">PC View</string>
     <string name="pc_gallery">PC Gallery</string>
+    <string name="pc_view">PhotoCaption View</string>
+    <string name="pc_settings">PhotoCaption Settings</string>
     
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
@@ -16,6 +17,7 @@
     <string name="gallery">Gallery</string>
     <string name="save">Save</string>
     <string name="capture">Capture</string>
+    <string name="settings">Settings</string>
 
     <string name="type_comment">Type a comment</string>
 
@@ -26,4 +28,7 @@
     <string name="donotdelete">Don\'t delete</string>
     <string name="saved">Your comment has been saved !</string>
     <string name="deleted">The image has been deleted !</string>
+
+    <string name="pref_gallery_whole_caption">Entire captions</string>
+    <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>
 </resources>

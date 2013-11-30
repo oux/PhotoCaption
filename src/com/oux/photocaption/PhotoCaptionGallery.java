@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.content.res.TypedArray;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -47,7 +49,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
     ActionBar actionBar;
-    private boolean mEntireComment;
+    private boolean mEntireCaption;
     Parcelable gridState;
 
     @Override
@@ -55,38 +57,47 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
 
-        mEntireComment = true;
-
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_gallery);
-        int margin = getResources().getDimensionPixelSize(R.dimen.margin);
 
         // TODO: try to navigate by album (NavigationList).
+    }
 
-        if (mEntireComment)
+    private void setGridView()
+    {
+        if (mEntireCaption)
         {
-            setContentView(R.layout.staggered_gallery);
-            customGridAdapter = new GridViewAdapter(this, R.layout.staggered_row_grid);
-            sGridView = (StaggeredGridView) this.findViewById(R.id.staggeredGridView);
-            if (sGridView != null)
-            {
-                sGridView.setAdapter(customGridAdapter);
-                sGridView.setItemMargin(margin); // set the GridView margin
-                sGridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
-                sGridView.setOnItemClickListener((StaggeredGridView.OnItemClickListener)this);
-                sGridView.setOnItemLongClickListener( (StaggeredGridView.OnItemLongClickListener)this);
+            if (sGridView == null) {
+                gridView = null;
+                customGridAdapter = null;
+                setContentView(R.layout.staggered_gallery);
+                customGridAdapter = new GridViewAdapter(this, R.layout.staggered_row_grid);
+                sGridView = (StaggeredGridView) this.findViewById(R.id.staggeredGridView);
+                if (sGridView != null)
+                {
+                    int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+                    sGridView.setAdapter(customGridAdapter);
+                    sGridView.setItemMargin(margin); // set the GridView margin
+                    sGridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
+                    sGridView.setOnItemClickListener((StaggeredGridView.OnItemClickListener)this);
+                    sGridView.setOnItemLongClickListener( (StaggeredGridView.OnItemLongClickListener)this);
+                }
             }
         }
         else
         {
-            setContentView(R.layout.gallery);
-            customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
-            gridView = (GridView) this.findViewById(R.id.gridView);
-            gridView.setAdapter(customGridAdapter);
-            gridView.setOnItemClickListener((OnItemClickListener)this);
-            gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
+            if (gridView == null) {
+                sGridView = null;
+                customGridAdapter = null;
+                setContentView(R.layout.gallery);
+                customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
+                gridView = (GridView) this.findViewById(R.id.gridView);
+                gridView.setAdapter(customGridAdapter);
+                gridView.setOnItemClickListener((OnItemClickListener)this);
+                gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
+            }
         }
         customGridAdapter.notifyDataSetChanged();
     }
@@ -99,7 +110,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     @Override
     public void onPause() {
         Log.i(TAG,"onPause");
-        if (mEntireComment)
+        if (mEntireCaption)
             gridState = sGridView.onSaveInstanceState();
         super.onPause();
     }
@@ -107,8 +118,11 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     @Override
     public void onResume() {
         Log.i(TAG,"onResume");
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mEntireCaption = sharedPrefs.getBoolean("pref_gallery_whole_caption", false);
+        setGridView();
         customGridAdapter.notifyDataSetChanged();
-        if (mEntireComment)
+        if (mEntireCaption)
             if (gridState != null) sGridView.onRestoreInstanceState(gridState);
         super.onResume();
     }
@@ -162,6 +176,10 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
                 intent = new Intent(this,PhotoCaptionEdit.class);
                 startActivity(intent);
                 finish();
+                return true;
+            case R.id.action_settings:
+                intent = new Intent(this,PhotoCaptionSettings.class);
+                startActivity(intent);
                 return true;
             case android.R.id.home:
                 finish();

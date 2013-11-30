@@ -6,4 +6,13 @@
         android:icon="@android:drawable/ic_menu_camera"
         android:showAsAction="ifRoom|withText"
         />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/settings"
+        android:icon="@android:drawable/ic_menu_preferences"/>
+    <!--
+        ic_menu_preferences=""
+        -->
 </menu>
