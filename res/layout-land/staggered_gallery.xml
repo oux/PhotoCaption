@@ -6,30 +6,15 @@
     android:background="@color/gallery_bg"
     tools:context=".PhotoCaptionGallery" >
 
-    <!--
-    android:id="@+id/container"
-<com.oux.photocaption.AutoMeasureGridView
-    </com.oux.photocaption.AutoMeasureGridView>
-<GridView
--->
     <com.origamilabs.library.views.StaggeredGridView
         android:id="@+id/staggeredGridView"
-        staggered:numColumns="3"
+        staggered:numColumns="5"
         staggered:drawSelectorOnTop="false"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:columnWidth="100dp"
         android:gravity="center"
-        android:verticalSpacing="5dp"
         android:drawSelectorOnTop="false"
         android:stretchMode="columnWidth" />
-
-    <!--ImageView
-        android:id="@+id/expanded_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:contentDescription="description_zoom_touch_close" /-->
-
 </RelativeLayout>
