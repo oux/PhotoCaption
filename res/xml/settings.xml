@@ -10,4 +10,23 @@
             android:defaultValue="false" 
             />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/about">
+        <Preference
+            android:key="build_version" android:title="@string/app_name"
+            android:summary="@string/pref_photocaption_sum">
+            <intent android:action="android.intent.action.VIEW" android:data="https://github.com/oux/PhotoCaption" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/poweredby">
+        <Preference android:key="ref_chrisbanes" android:title="@string/pref_photoview"
+            android:summary="@string/pref_photoview_sum">
+            <intent android:action="android.intent.action.VIEW" android:data="https://github.com/chrisbanes/PhotoView" />
+        </Preference>
+        <Preference android:key="ref_" android:title="@string/pref_staggeredgridview"
+            android:summary="@string/pref_staggeredgridview_sum">
+            <intent android:action="android.intent.action.VIEW" android:data="https://github.com/maurycyw/StaggeredGridView" />
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>

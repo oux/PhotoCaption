@@ -18,6 +18,8 @@
     <string name="save">Save</string>
     <string name="capture">Capture</string>
     <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="poweredby">Powered by</string>
 
     <string name="type_comment">Type a comment</string>
 
@@ -31,4 +33,9 @@
 
     <string name="pref_gallery_whole_caption">Entire captions</string>
     <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>
+    <string name="pref_photocaption_sum">By Sébastien MICHEL</string>
+    <string name="pref_photoview">PhotoView</string>
+    <string name="pref_photoview_sum">By Chris Banes</string>
+    <string name="pref_staggeredgridview">StaggeredGridView</string>
+    <string name="pref_staggeredgridview_sum">By Maurycy Wojtowicz</string>
 </resources>

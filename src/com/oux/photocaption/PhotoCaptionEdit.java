@@ -87,7 +87,7 @@ public class PhotoCaptionEdit extends Activity
         saveDialog = new AlertDialog.Builder(
                 this).create();
 
-        saveDialog.setTitle(getResources().getString(R.string.save));
+        saveDialog.setTitle(R.string.save);
         saveDialog.setMessage(getResources().getString(R.string.ask_save_description));
         saveDialog.setIcon(android.R.drawable.ic_menu_save);
         saveDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
