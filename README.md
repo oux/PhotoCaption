@@ -26,6 +26,8 @@ This caption is stored on the picture via a standard exif format. You can read i
 
 ## Todo
 - Add photos captions in new kitkat feature called "app Indexing"
+- Look for camera application except PC Edit to capture a photo
+- View send position to gallery (common adapter ?)
 
 ## License
 
