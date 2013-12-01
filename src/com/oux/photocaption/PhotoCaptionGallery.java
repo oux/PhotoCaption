@@ -54,6 +54,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO: try to navigate by album (NavigationList).
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
 
@@ -62,7 +63,9 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_gallery);
 
-        // TODO: try to navigate by album (NavigationList).
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mEntireCaption = sharedPrefs.getBoolean("pref_gallery_whole_caption", false);
+        setGridView();
     }
 
     private void setGridView()
