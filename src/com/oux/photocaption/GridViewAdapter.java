@@ -20,11 +20,6 @@ import android.widget.Toast;
 import com.oux.loader.ImageLoader;
 import com.oux.loader.ViewHolder;
 
-/**
- *
- * @author javatechig {@link http://javatechig.com}
- *
- */
 public class GridViewAdapter extends ArrayAdapter {
     private Context mContext;
     private int layoutResourceId;
@@ -41,17 +36,12 @@ public class GridViewAdapter extends ArrayAdapter {
 		mLoader = new ImageLoader(context);
 
         // Make a first query
-        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Images.Media._ID};
-        String selection = "";
-        String [] selectionArgs = null;
-        externalCursor = mContext.getContentResolver().query(
-            externalContentUri,projection,selection,selectionArgs,null);
-        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+        notifyDataSetChanged();
     }
 
 
     public Uri getUri(int position) {
+        // externalCursor.moveToPosition(position);
         externalCursor.moveToPosition(getCount()-(position+1));
         int imageID = externalCursor.getInt( externalColumnIndex );
         return  Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
@@ -61,11 +51,14 @@ public class GridViewAdapter extends ArrayAdapter {
     public void notifyDataSetChanged() {
         // Make again the query to take into account adds and deletes
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        // String[] projection = {MediaStore.Images.Media._ID,MediaStore.MediaColumns.DATE_ADDED};
         String[] projection = {MediaStore.Images.Media._ID};
         String selection = "";
         String [] selectionArgs = null;
+        // externalCursor = MediaStore.Images.Media.query(mContext.getContentResolver(),
         externalCursor = mContext.getContentResolver().query(
             externalContentUri,projection,selection,selectionArgs,null);
+            // externalContentUri,projection,selection,selectionArgs,MediaStore.MediaColumns.DATE_ADDED+" asc");
         externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
 
         mLoader.clearCache();
@@ -87,6 +80,7 @@ public class GridViewAdapter extends ArrayAdapter {
         } else {
             holder = (ViewHolder) row.getTag();
         }
+		// mLoader.DisplayImage(position, holder);
 		mLoader.DisplayImage(getCount()-(position+1), holder);
         return row;
     }
