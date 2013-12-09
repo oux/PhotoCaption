@@ -25,8 +25,7 @@ This caption is stored on the picture via a standard exif format. You can read i
 - On samsung devices some binary informations are displayed: Is it my exif reader or a samsung writer issue ? to be investigated.
 
 ## Todo
-- Add photos captions in new kitkat feature called "app Indexing"
-- Look for camera application except PC Edit to capture a photo
+- Add photos captions search index.
 - View send position to gallery (common adapter ?)
 
 ## License
