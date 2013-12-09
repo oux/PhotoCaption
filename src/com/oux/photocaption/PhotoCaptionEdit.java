@@ -69,6 +69,7 @@ public class PhotoCaptionEdit extends Activity
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
     AlertDialog saveDialog;
     AlertDialog deleteDialog;
+    static boolean mBackToShot = false;
 
     /** Called when the activity is first created. */
     @Override
@@ -107,7 +108,16 @@ public class PhotoCaptionEdit extends Activity
                 setDescription(descriptionView.getText().toString());
                 Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
-                finish();
+                if (mBackToShot)
+                {
+                    takePhoto();
+                }
+                else
+                {
+                    Intent intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
@@ -135,6 +145,7 @@ public class PhotoCaptionEdit extends Activity
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
+        mBackToShot=false;
         if (Intent.ACTION_EDIT.equals(action))
         {
             imageUri = intent.getData();
@@ -192,7 +203,16 @@ public class PhotoCaptionEdit extends Activity
                 return true;
             case R.id.action_save:
                 setDescription(descriptionView.getText().toString());
-                finish();
+                if (mBackToShot)
+                {
+                    takePhoto();
+                }
+                else
+                {
+                    intent = new Intent(this,PhotoCaptionGallery.class);
+                    startActivity(intent);
+                    finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -228,6 +248,7 @@ public class PhotoCaptionEdit extends Activity
     }
 
     public void takePhoto() {
+        mBackToShot = true;
         List<Intent> targetedIntents = new ArrayList<Intent>();
         Context context = getApplicationContext();
         final PackageManager pm = context.getPackageManager();
