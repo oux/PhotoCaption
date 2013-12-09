@@ -17,6 +17,7 @@
             android:layout_centerVertical="true"
             android:layout_margin="5dp"
             android:padding="5dp"
+            android:selectAllOnFocus="true"
             android:layout_gravity="bottom|center"
             android:background="@color/placard"
             android:hint="@string/type_comment"
