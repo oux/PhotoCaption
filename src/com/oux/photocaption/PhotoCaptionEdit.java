@@ -1,6 +1,8 @@
 package com.oux.photocaption;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 // import java.io.OutputStream;
 // import java.io.BufferedOutputStream;
 // import java.io.FileOutputStream;
@@ -19,12 +21,17 @@ import android.app.AlertDialog;
 import android.app.ActionBar.OnNavigationListener;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.content.Intent;
 import android.content.Context;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.ComponentName;
+import android.content.pm.LabeledIntent;
+import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -54,7 +61,7 @@ public class PhotoCaptionEdit extends Activity
     static final String TAG = "photoCaptionEdit";
     private Uri imageUri;
     private String mInitialDescription;
-    private static int TAKE_PICTURE = 100;
+    private static int SHOT = 100;
     EditText descriptionView;
     ImageView imageView;
     File mFile;
@@ -73,8 +80,6 @@ public class PhotoCaptionEdit extends Activity
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        // actionBar.setListNavigationCallbacks(mSpinnerAdapter, mNavigationCallback);
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_edit);
 
@@ -189,10 +194,6 @@ public class PhotoCaptionEdit extends Activity
                 setDescription(descriptionView.getText().toString());
                 finish();
                 return true;
-            case android.R.id.home:
-                // TODO: go to our gallery tiled
-                finish();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -216,7 +217,7 @@ public class PhotoCaptionEdit extends Activity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == TAKE_PICTURE) {
+        if (requestCode == SHOT) {
             if (resultCode == Activity.RESULT_OK) {
                 scanMedia(imageUri.getPath());
                 handleImage();
@@ -227,17 +228,53 @@ public class PhotoCaptionEdit extends Activity
     }
 
     public void takePhoto() {
+        List<Intent> targetedIntents = new ArrayList<Intent>();
+        Context context = getApplicationContext();
+        final PackageManager pm = context.getPackageManager();
+
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        intent.setClassName("com.android.gallery3d","com.android.camera.CameraActivity");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         File path = Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES);
+                Environment.DIRECTORY_PICTURES);
         Log.i(TAG,"path:" + path);
         File photo = new File(path,  "CAP_"+ sdf.format(new Date()) +".jpg");
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
-        startActivityForResult(intent, TAKE_PICTURE);
+
+        List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (appInfoList.isEmpty()) {
+            Log.e(TAG,"No application found to take a shot");
+            Toast.makeText(context,
+                    getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        ArrayList<Intent> extraIntents = new ArrayList<Intent>();
+
+        for (ResolveInfo ri : appInfoList) {
+            String packageName = ri.activityInfo.packageName;
+            Log.i(TAG,"packageName:" + packageName);
+            if (!packageName.equals(context.getPackageName())) {
+                Intent it = new Intent("android.media.action.IMAGE_CAPTURE");
+                it.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                it.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photo));
+                extraIntents.add(it);
+            }
+        }
+
+        if (extraIntents.isEmpty())
+        {
+            Log.e(TAG,"No application found to take a shot");
+            Toast.makeText(context,
+                    getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1), "Choose your camera to take the shot");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
+        startActivityForResult(chooserIntent,SHOT);
+
     }
 
     private void scanMedia(String path) {
@@ -290,7 +327,6 @@ public class PhotoCaptionEdit extends Activity
         }
     }
 
-
     String getDescription()
     {
         ExifInterface exifInterface = new ExifInterface();
@@ -336,4 +372,8 @@ public class PhotoCaptionEdit extends Activity
       }
   }
 
+  @Override
+  protected void onStop() {
+      super.onStop();
+  }
 }

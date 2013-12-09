@@ -30,6 +30,7 @@
     <string name="donotdelete">Don\'t delete</string>
     <string name="saved">Your comment has been saved !</string>
     <string name="deleted">The image has been deleted !</string>
+    <string name="noapptoshot">No application found to take the shot</string>
 
     <string name="pref_gallery_whole_caption">Entire captions</string>
     <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>
