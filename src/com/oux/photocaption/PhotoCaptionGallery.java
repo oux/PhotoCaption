@@ -63,13 +63,13 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_gallery);
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mEntireCaption = sharedPrefs.getBoolean("pref_gallery_whole_caption", false);
         setGridView();
     }
 
     private void setGridView()
     {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mEntireCaption = sharedPrefs.getBoolean("pref_gallery_whole_caption", false);
         if (mEntireCaption)
         {
             if (sGridView == null) {
@@ -78,9 +78,11 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
                 setContentView(R.layout.staggered_gallery);
                 customGridAdapter = new GridViewAdapter(this, R.layout.staggered_row_grid);
                 sGridView = (StaggeredGridView) this.findViewById(R.id.staggeredGridView);
+                //mNumCol = sharedPrefs.getInt("pref_gallery_numColumns", 3);
                 if (sGridView != null)
                 {
                     int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+                    // sGridView.setColumnCount(mNumCol);
                     sGridView.setAdapter(customGridAdapter);
                     sGridView.setItemMargin(margin); // set the GridView margin
                     sGridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
@@ -97,6 +99,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
                 setContentView(R.layout.gallery);
                 customGridAdapter = new GridViewAdapter(this, R.layout.row_grid);
                 gridView = (GridView) this.findViewById(R.id.gridView);
+                gridView.setNumColumns(-1);
                 gridView.setAdapter(customGridAdapter);
                 gridView.setOnItemClickListener((OnItemClickListener)this);
                 gridView.setOnItemLongClickListener((OnItemLongClickListener)this);
@@ -121,8 +124,6 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     @Override
     public void onResume() {
         Log.i(TAG,"onResume");
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mEntireCaption = sharedPrefs.getBoolean("pref_gallery_whole_caption", false);
         setGridView();
         customGridAdapter.notifyDataSetChanged();
         if (mEntireCaption)
