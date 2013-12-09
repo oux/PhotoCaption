@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.Charset;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -101,7 +103,15 @@ public class ImageLoader {
         ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
         String description = null;
         if (tag != null)
+        {
             description = tag.getValueAsString();
+            CharsetEncoder encoder =
+                Charset.forName("ISO-8859-1").newEncoder();
+
+            if (! encoder.canEncode(description)) {
+                description="<BINARY DATA>";
+            }
+        }
         return new Pair<Bitmap, String>(loadThumbnailImage(uri.toString()), description);
     }
 

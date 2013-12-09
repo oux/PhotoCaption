@@ -8,6 +8,9 @@ import java.util.ArrayList;
 // import java.io.FileOutputStream;
 import java.io.File;
 // import java.io.IOException;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.Charset;
+import java.nio.CharBuffer;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -242,6 +245,8 @@ public class PhotoCaptionEdit extends Activity
                 scanMedia(imageUri.getPath());
                 handleImage();
             } else {
+                Intent intent = new Intent(this,PhotoCaptionGallery.class);
+                startActivity(intent);
                 finish();
             }
         }
@@ -292,7 +297,10 @@ public class PhotoCaptionEdit extends Activity
                     getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
             finish();
         }
-        Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1), "Choose your camera to take the shot");
+        Intent chooserIntent = Intent.createChooser( extraIntents.get(0),
+                getResources().getString(R.string.choose_cam));
+        // Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1), "Choose your camera to take the shot");
+        Log.i(TAG,"Number of apps on choice:" + extraIntents.size());
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
         startActivityForResult(chooserIntent,SHOT);
 
@@ -331,7 +339,7 @@ public class PhotoCaptionEdit extends Activity
             Bitmap preview_bitmap = null;
             try {
                 File image = null;
-                if (imageUri.getScheme().equals("content")) 
+                if (imageUri.getScheme().equals("content"))
                     image = new File(getRealPathFromURI(imageUri));
                 else
                     image = new File(imageUri.getPath());
@@ -359,7 +367,15 @@ public class PhotoCaptionEdit extends Activity
         ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
         if (tag != null)
         {
-            return tag.getValueAsString();
+            String description = tag.getValueAsString();
+            CharsetEncoder encoder =
+                    Charset.forName("ISO-8859-1").newEncoder();
+
+            if (encoder.canEncode(description)) {
+                return description;
+            } else {
+                return "<BINARY DATA>";
+            }
         }
         return "";
     }
@@ -368,12 +384,26 @@ public class PhotoCaptionEdit extends Activity
   {
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
+      /*
       description = description.replaceAll("[ïî]", "i");
       description = description.replaceAll("[àáâã]", "a");
       description = description.replaceAll("[éèë]", "e");
       description = description.replaceAll("[ç]", "c");
       description = description.replaceAll("[ô]", "o");
       description = description.replaceAll("[ù]", "u");
+      */
+      CharsetEncoder encoder =
+          Charset.forName("ISO-8859-1").newEncoder();
+
+      CharBuffer cb = CharBuffer.wrap(description);
+      try {
+          description = new String(encoder.encode(cb).array(),  Charset.forName("ISO-8859-1") );
+          Log.i(TAG,"Setting description:" + description + " on " + imageUri);
+      }
+      catch(Exception e)
+      {
+          e.printStackTrace();
+      }
       ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, description);
       if(tag != null) {
           exifInterface.setTag(tag);

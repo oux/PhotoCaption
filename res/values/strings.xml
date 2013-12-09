@@ -6,8 +6,8 @@
     <string name="mode_view">View Mode</string>
     <string name="mode_gallery">Gallery Mode</string>
 
-    <string name="pc_edit">PC Edit</string>
-    <string name="pc_gallery">PC Gallery</string>
+    <string name="pc_edit">PhotoCaption Edit</string>
+    <string name="pc_gallery">PhotoCaption Gallery</string>
     <string name="pc_view">PhotoCaption View</string>
     <string name="pc_settings">PhotoCaption Settings</string>
     
@@ -31,6 +31,7 @@
     <string name="saved">Your comment has been saved !</string>
     <string name="deleted">The image has been deleted !</string>
     <string name="noapptoshot">No application found to take the shot</string>
+    <string name="choose_cam">Choose your camera to take the shot</string>
 
     <string name="pref_gallery_whole_caption">Entire captions</string>
     <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>

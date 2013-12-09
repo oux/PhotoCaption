@@ -3,6 +3,8 @@ package com.oux.photocaption;
 import android.support.v4.view.PagerAdapter;
 import android.provider.MediaStore;
 import android.content.Context;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.Charset;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.LayoutInflater;
@@ -97,7 +99,15 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
         String description = null;
         if (tag != null)
+        {
             description = tag.getValueAsString();
+            CharsetEncoder encoder =
+                Charset.forName("ISO-8859-1").newEncoder();
+
+            if (! encoder.canEncode(description)) {
+                description="<BINARY DATA>";
+            }
+        }
         try {
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inSampleSize = 8;
