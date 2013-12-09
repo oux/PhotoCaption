@@ -8,9 +8,6 @@ import java.util.ArrayList;
 // import java.io.FileOutputStream;
 import java.io.File;
 // import java.io.IOException;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.Charset;
-import java.nio.CharBuffer;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -379,31 +376,17 @@ public class PhotoCaptionEdit extends Activity
         return "";
     }
 
+    public String decompose(String s) {
+        return java.text.Normalizer.normalize(s,
+                java.text.Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+","");
+    }
+
   void setDescription(String description)
   {
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
-      // Still use manual conversion while CharsetEncoder doesn't work
-      description = description.replaceAll("[ïî]", "i");
-      description = description.replaceAll("[àáâã]", "a");
-      description = description.replaceAll("[éèë]", "e");
-      description = description.replaceAll("[ç]", "c");
-      description = description.replaceAll("[ô]", "o");
-      description = description.replaceAll("[ù]", "u");
 
-      CharsetEncoder encoder =
-          Charset.forName("ISO-8859-1").newEncoder();
-
-      CharBuffer cb = CharBuffer.wrap(description);
-      try {
-          description = new String(encoder.encode(cb).array(),  Charset.forName("ISO-8859-1") );
-          Log.i(TAG,"Setting description:" + description + " on " + imageUri);
-      }
-      catch(Exception e)
-      {
-          e.printStackTrace();
-      }
-      ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, description);
+      ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, decompose(description));
       if(tag != null) {
           exifInterface.setTag(tag);
       }
