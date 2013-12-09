@@ -8,6 +8,8 @@ import java.util.ArrayList;
 // import java.io.FileOutputStream;
 import java.io.File;
 // import java.io.IOException;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.Charset;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -365,7 +367,7 @@ public class PhotoCaptionEdit extends Activity
         {
             String description = tag.getValueAsString();
             CharsetEncoder encoder =
-                    Charset.forName("ISO-8859-1").newEncoder();
+                    Charset.forName("US-ASCII").newEncoder();
 
             if (encoder.canEncode(description)) {
                 return description;

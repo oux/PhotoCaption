@@ -40,12 +40,15 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         String selection = "";
         String [] selectionArgs = null;
         externalCursor = mContext.getContentResolver().query(
-                externalContentUri,projection,selection,selectionArgs,null);
+                externalContentUri,projection,
+                selection,selectionArgs,MediaStore.Images.Media._ID+" desc");
+                // selection,selectionArgs,null);
         externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
     }
 
     public Uri getUri(int position) {
-        externalCursor.moveToPosition(getCount()-(position+1));
+        externalCursor.moveToPosition(position);
+        // externalCursor.moveToPosition(getCount()-(position+1));
         int imageID = externalCursor.getInt( externalColumnIndex );
         return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
     }
@@ -60,7 +63,8 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         {
             externalCursor.moveToNext();
         }
-        return getCount() - externalCursor.getPosition() - 1;
+        return externalCursor.getPosition();
+        // return getCount() - externalCursor.getPosition() - 1;
     }
 
     @Override
@@ -85,7 +89,8 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         ExifInterface exifInterface = new ExifInterface();
         Bitmap preview_bitmap = null;
 
-        externalCursor.moveToPosition(getCount()-(position+1));
+        externalCursor.moveToPosition(position);
+        // externalCursor.moveToPosition(getCount()-(position+1));
         int imageID = externalCursor.getInt( externalColumnIndex );
         Uri imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
 

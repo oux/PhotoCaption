@@ -23,7 +23,6 @@ import com.oux.loader.ViewHolder;
 public class GridViewAdapter extends ArrayAdapter {
     private Context mContext;
     private int layoutResourceId;
-    private Cursor externalCursor;
     private Uri externalContentUri;
     private int externalColumnIndex;
     static final String TAG = "photoCaptionGridViewAdapter";
@@ -41,26 +40,12 @@ public class GridViewAdapter extends ArrayAdapter {
 
 
     public Uri getUri(int position) {
-        // externalCursor.moveToPosition(position);
-        externalCursor.moveToPosition(getCount()-(position+1));
-        int imageID = externalCursor.getInt( externalColumnIndex );
+        int imageID = mLoader.getImageID(position);
         return  Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
     }
 
     @Override
     public void notifyDataSetChanged() {
-        // Make again the query to take into account adds and deletes
-        externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        // String[] projection = {MediaStore.Images.Media._ID,MediaStore.MediaColumns.DATE_ADDED};
-        String[] projection = {MediaStore.Images.Media._ID};
-        String selection = "";
-        String [] selectionArgs = null;
-        // externalCursor = MediaStore.Images.Media.query(mContext.getContentResolver(),
-        externalCursor = mContext.getContentResolver().query(
-            externalContentUri,projection,selection,selectionArgs,null);
-            // externalContentUri,projection,selection,selectionArgs,MediaStore.MediaColumns.DATE_ADDED+" asc");
-        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
-
         mLoader.clearCache();
         super.notifyDataSetChanged();
     }
@@ -80,13 +65,12 @@ public class GridViewAdapter extends ArrayAdapter {
         } else {
             holder = (ViewHolder) row.getTag();
         }
-		// mLoader.DisplayImage(position, holder);
-		mLoader.DisplayImage(getCount()-(position+1), holder);
+		mLoader.DisplayImage(position, holder);
         return row;
     }
 
     public int getCount() {
-        return externalCursor.getCount();
+        return mLoader.getCount();
     }
 }
 

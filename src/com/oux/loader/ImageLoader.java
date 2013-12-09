@@ -47,11 +47,30 @@ public class ImageLoader {
     Handler handler=new Handler();//handler to display images in UI thread
     private Uri externalContentUri;
     private int externalColumnIndex;
+    private int externalColumnDate;
+    private Cursor externalCursor;
 
     public ImageLoader(Context context){
         mContext = context;
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         executorService=Executors.newFixedThreadPool(5);
+        setCursor();
+    }
+
+    public void setCursor() {
+        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN};
+        String selection = "";
+        String [] selectionArgs = null;
+        externalCursor = mContext.getContentResolver().query(
+            externalContentUri,projection,
+            selection,selectionArgs,MediaStore.Images.Media._ID+" desc");
+        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+        externalColumnDate = externalCursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
+    }
+
+    public int getImageID(int position) {
+        externalCursor.moveToPosition(position);
+        return externalCursor.getInt( externalColumnIndex );
     }
 
     public void DisplayImage(int position, ViewHolder holder)
@@ -80,16 +99,8 @@ public class ImageLoader {
     {
         ExifInterface exifInterface = new ExifInterface();
 
-        String[] projection = {MediaStore.Images.Media._ID};
-        String selection = "";
-        String [] selectionArgs = null;
-        Cursor externalCursor = mContext.getContentResolver().query(
-            externalContentUri,projection,selection,selectionArgs,null);
-        externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
-
         externalCursor.moveToPosition(position);
         int imageID = externalCursor.getInt( externalColumnIndex );
-        externalCursor.close();
         Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
@@ -106,13 +117,17 @@ public class ImageLoader {
         {
             description = tag.getValueAsString();
             CharsetEncoder encoder =
-                Charset.forName("ISO-8859-1").newEncoder();
+                Charset.forName("US-ASCII").newEncoder();
 
             if (! encoder.canEncode(description)) {
                 description="<BINARY DATA>";
             }
         }
         return new Pair<Bitmap, String>(loadThumbnailImage(uri.toString()), description);
+    }
+
+    public int getCount() {
+        return externalCursor.getCount();
     }
 
     protected Bitmap loadThumbnailImage( String url ) {
@@ -189,6 +204,8 @@ public class ImageLoader {
 
     public void clearCache() {
         memoryCache.clear();
+        externalCursor.close();
+        setCursor();
     }
 
 }
