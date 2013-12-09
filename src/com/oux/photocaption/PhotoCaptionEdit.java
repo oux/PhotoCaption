@@ -297,9 +297,8 @@ public class PhotoCaptionEdit extends Activity
                     getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
             finish();
         }
-        Intent chooserIntent = Intent.createChooser( extraIntents.get(0),
+        Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1),
                 getResources().getString(R.string.choose_cam));
-        // Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1), "Choose your camera to take the shot");
         Log.i(TAG,"Number of apps on choice:" + extraIntents.size());
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
         startActivityForResult(chooserIntent,SHOT);
@@ -384,14 +383,14 @@ public class PhotoCaptionEdit extends Activity
   {
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
-      /*
+      // Still use manual conversion while CharsetEncoder doesn't work
       description = description.replaceAll("[ïî]", "i");
       description = description.replaceAll("[àáâã]", "a");
       description = description.replaceAll("[éèë]", "e");
       description = description.replaceAll("[ç]", "c");
       description = description.replaceAll("[ô]", "o");
       description = description.replaceAll("[ù]", "u");
-      */
+
       CharsetEncoder encoder =
           Charset.forName("ISO-8859-1").newEncoder();
 
