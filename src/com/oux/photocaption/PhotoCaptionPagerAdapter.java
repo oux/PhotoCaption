@@ -41,8 +41,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         String [] selectionArgs = null;
         externalCursor = mContext.getContentResolver().query(
                 externalContentUri,projection,
-                selection,selectionArgs,MediaStore.Images.Media._ID+" desc");
-                // selection,selectionArgs,null);
+                selection,selectionArgs,
+                MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC, "
+                + MediaStore.Images.ImageColumns._ID + " DESC");
         externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
     }
 
