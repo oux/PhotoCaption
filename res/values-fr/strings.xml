@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Photo Legende</string>
+    
+    <string name="mode_edit">Mode Edition</string>
+    <string name="mode_view">Mode Visualisation</string>
+    <string name="mode_gallery">Mode Galerie</string>
+
+    <string name="pc_edit">Photo Legende Edition</string>
+    <string name="pc_gallery">Photo Legende Galerie</string>
+    <string name="pc_view">Photo Legende Visualisation</string>
+    <string name="pc_settings">Photo Legende Parametrage</string>
+    
+    <string name="edit">Editer</string>
+    <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer</string>
+    <string name="gallery">Galerie</string>
+    <string name="save">Sauver</string>
+    <string name="capture">Capturer</string>
+    <string name="settings">Parametrage</string>
+    <string name="about">A Propos</string>
+    <string name="poweredby">Fonctionne grace à</string>
+
+    <string name="type_comment">Saisissez votre commentaire</string>
+
+    <string name="adapter">ADAPTER</string>
+    <string name="ask_save_description">Voulez vous sauver votre commentaire ?</string>
+    <string name="ask_delete_image">Voulez vous vraiment supprimer cette image ?</string>
+    <string name="donotsave">Ne pas sauver</string>
+    <string name="donotdelete">Ne pas supprimer</string>
+    <string name="saved">Votre commentaire a été sauvegardé !</string>
+    <string name="deleted">L\'image a été supprimée !</string>
+    <string name="noapptoshot">Aucune application trouvée pour prendre la photo</string>
+    <string name="choose_cam">Choisissez l\'application pour prendre la photo (Ne pas selection Photo Legende Edition)</string>
+
+    <string name="pref_gallery_whole_caption">Commentaires complets</string>
+    <string name="pref_gallery_whole_caption_summ">Afficher entierement les commentaires dans la galerie</string>
+    <string name="pref_photocaption_sum">Par Sébastien MICHEL</string>
+    <string name="pref_photoview">PhotoView</string>
+    <string name="pref_photoview_sum">Par Chris Banes</string>
+    <string name="pref_staggeredgridview">StaggeredGridView</string>
+    <string name="pref_staggeredgridview_sum">Par Maurycy Wojtowicz</string>
+</resources>

@@ -71,7 +71,6 @@
         </activity>
         <activity android:name="PhotoCaptionSettings"
             android:label="@string/pc_settings"
-            android:icon="@android:drawable/ic_menu_preferences"
             >
         </activity>
     </application>
