@@ -74,10 +74,11 @@ public class PhotoCaptionView extends Activity
         else
         {
             if (Intent.ACTION_VIEW.equals(action)) {
+                Log.i(TAG,"Action View:" + intent.getData());
                 imageUri = intent.getData();
                 Log.i(TAG,"Receive Adapter: " + adapter);
             } else if (Intent.ACTION_SEND.equals(action) && type != null) {
-                Log.i(TAG,"Action View:" + intent.getData());
+                Log.i(TAG,"Action Send:" + intent.getData());
                 if (type.startsWith("image/")) {
                     imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 }
@@ -86,13 +87,20 @@ public class PhotoCaptionView extends Activity
             }
             if (imageUri.getScheme().equals("content"))
             {
-                Log.i(TAG,"VIEW: Uri1:" + imageUri
+                Log.i(TAG,"VIEW: Uri:" + imageUri
                         + " uri2:"
-                        + mPagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue()));
-                mPosition = mPagerAdapter.getPosition(Integer.valueOf(imageUri.getLastPathSegment()).intValue());
+                        + mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue()));
+                mPosition = mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue());
+                mViewPager.setCurrentItem(mPosition,false);
+            } else if (imageUri.getScheme().equals("file"))
+            {
+                Log.i(TAG,"VIEW: Uri:" + imageUri
+                        + " uri2:"
+                        + mPagerAdapter.getPosition(imageUri.getPath()));
+                mPosition = mPagerAdapter.getPosition(imageUri.getPath());
                 mViewPager.setCurrentItem(mPosition,false);
             } else {
-                Log.i(TAG,"To be implemented: Uri1:" + imageUri);
+                Log.i(TAG,"To be implemented: Scheme:" + imageUri.getScheme() + ", Uri:" + imageUri);
                 // To be implemented
             }
         }

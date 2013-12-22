@@ -54,7 +54,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
     }
 
-    public int getPosition(int id) {
+    public int getPosition(long id) {
         //Do the query
         String[] projection = {MediaStore.Images.Media._ID};
         String selection = "_ID = ?";
@@ -66,6 +66,25 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         }
         return externalCursor.getPosition();
         // return getCount() - externalCursor.getPosition() - 1;
+    }
+
+    public int getPosition(String filePath) {
+        String[] projection = {MediaStore.Images.Media._ID};
+        String selection = MediaStore.Images.ImageColumns.DATA + " LIKE ?";
+        String [] selectionArgs = {filePath};
+        // TODO This will break if we have no matching item in the MediaStore.
+        Cursor cursor = mContext.getContentResolver().query(
+                externalContentUri,projection,
+                selection,selectionArgs,
+                null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        long Id = cursor.getLong(columnIndex);
+
+        Log.d(TAG,"Photo ID is " + Id);
+        cursor.close();
+        return getPosition(Id);
     }
 
     @Override
