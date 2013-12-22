@@ -107,6 +107,14 @@ public class PhotoCaptionView extends Activity
     }
 
     @Override
+    public void onPause() {
+        Log.i(TAG,"onPause");
+        finish();
+        super.onPause();
+    }
+
+
+    @Override
     public void onDestroy()
     {
         /*
