@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import android.webkit.MimeTypeMap;
 
 import android.R;
 import android.content.Context;
@@ -59,8 +60,9 @@ public class ImageLoader {
 
     public void setCursor() {
         String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN};
-        String selection = "";
-        String [] selectionArgs = null;
+        String selection = MediaStore.Files.FileColumns.MIME_TYPE + "=?";
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpeg");
+        String [] selectionArgs = new String[]{ mimeType };
         externalCursor = mContext.getContentResolver().query(
             externalContentUri,projection,
             selection,selectionArgs,

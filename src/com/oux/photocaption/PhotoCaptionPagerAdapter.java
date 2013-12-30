@@ -21,6 +21,7 @@ import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.IfdId;
 import uk.co.senab.photoview.PhotoView;
+import android.webkit.MimeTypeMap;
 
 class PhotoCaptionPagerAdapter extends PagerAdapter {
 
@@ -37,8 +38,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = {MediaStore.Images.Media._ID};
-        String selection = "";
-        String [] selectionArgs = null;
+        String selection = MediaStore.Files.FileColumns.MIME_TYPE + "=?";
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpeg");
+        String [] selectionArgs = new String[]{ mimeType };
         externalCursor = mContext.getContentResolver().query(
                 externalContentUri,projection,
                 selection,selectionArgs,
