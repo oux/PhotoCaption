@@ -32,7 +32,6 @@ public class PhotoCaptionView extends Activity
 {
     static final String TAG = "photoCaptionView";
     private Uri imageUri;
-    GridViewAdapter adapter = null;
     ActionBar actionBar;
     ViewPager mViewPager;
     PhotoCaptionPagerAdapter mPagerAdapter;
@@ -66,23 +65,16 @@ public class PhotoCaptionView extends Activity
 
         mPosition = intent.getIntExtra("position",-1);
 
-        if (mPosition != -1)
-        {
-            Log.i(TAG,"new position: " + mPosition);
-            mViewPager.setCurrentItem(mPosition,false);
-        }
-        else
+        if (mPosition == -1)
         {
             if (Intent.ACTION_VIEW.equals(action)) {
                 Log.i(TAG,"Action View:" + intent.getData());
                 imageUri = intent.getData();
-                Log.i(TAG,"Receive Adapter: " + adapter);
             } else if (Intent.ACTION_SEND.equals(action) && type != null) {
                 Log.i(TAG,"Action Send:" + intent.getData());
-                if (type.startsWith("image/")) {
-                    imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                }
+                imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             } else {
+                Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_SHORT).show();
                 finish();
             }
             if (imageUri.getScheme().equals("content"))
@@ -91,19 +83,20 @@ public class PhotoCaptionView extends Activity
                         + " uri2:"
                         + mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue()));
                 mPosition = mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue());
-                mViewPager.setCurrentItem(mPosition,false);
             } else if (imageUri.getScheme().equals("file"))
             {
                 Log.i(TAG,"VIEW: Uri:" + imageUri
                         + " uri2:"
                         + mPagerAdapter.getPosition(imageUri.getPath()));
                 mPosition = mPagerAdapter.getPosition(imageUri.getPath());
-                mViewPager.setCurrentItem(mPosition,false);
             } else {
                 Log.i(TAG,"To be implemented: Scheme:" + imageUri.getScheme() + ", Uri:" + imageUri);
                 // To be implemented
             }
         }
+        Log.i(TAG,"new position: " + mPosition);
+        mViewPager.setCurrentItem(mPosition,false);
+
     }
 
     @Override
@@ -168,6 +161,7 @@ public class PhotoCaptionView extends Activity
         }
     }
 
+    // TODO: re enable is code
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {

@@ -32,6 +32,7 @@
     <string name="deleted">The image has been deleted !</string>
     <string name="noapptoshot">No application found to take the shot</string>
     <string name="choose_cam">Choose your camera application to take the shot (Do not select Photo Caption Edit)</string>
+    <string name="not_able_to_perform">Photo Caption is not able to perform this action</string>
 
     <string name="pref_gallery_whole_caption">Entire captions</string>
     <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>

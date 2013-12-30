@@ -57,17 +57,16 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     }
 
     public int getPosition(long id) {
-        //Do the query
-        String[] projection = {MediaStore.Images.Media._ID};
-        String selection = "_ID = ?";
-        String [] selectionArgs = {String.valueOf(id)};
-        externalCursor.moveToFirst();
-        while (externalCursor.getInt(externalColumnIndex) != id)
-        {
-            externalCursor.moveToNext();
+        try {
+            externalCursor.moveToFirst();
+            while (externalCursor.getInt(externalColumnIndex) != id)
+            {
+                externalCursor.moveToNext();
+            }
+            return externalCursor.getPosition();
+        } catch (Exception e) {
+            return -1;
         }
-        return externalCursor.getPosition();
-        // return getCount() - externalCursor.getPosition() - 1;
     }
 
     public int getPosition(String filePath) {
@@ -82,11 +81,15 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         cursor.moveToFirst();
 
         int columnIndex = cursor.getColumnIndex(projection[0]);
-        long Id = cursor.getLong(columnIndex);
+        try {
+            long Id = cursor.getLong(columnIndex);
 
-        Log.d(TAG,"Photo ID is " + Id);
-        cursor.close();
-        return getPosition(Id);
+            Log.d(TAG,"Photo ID is " + Id);
+            cursor.close();
+            return getPosition(Id);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @Override
