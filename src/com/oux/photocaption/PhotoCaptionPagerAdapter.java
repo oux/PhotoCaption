@@ -31,6 +31,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     private Uri externalContentUri;
     private int externalColumnIndex;
     static final String TAG = "photoCaptionPagerAdapter";
+    private Uri mImageUriForced;
 
     public void setContext(PhotoCaptionView context) {
         mContext = context;
@@ -47,6 +48,11 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
                 MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC, "
                 + MediaStore.Images.ImageColumns._ID + " DESC");
         externalColumnIndex = externalCursor.getColumnIndex(MediaStore.Images.Media._ID);
+    }
+
+    public void forceUri(Uri imageUri)
+    {
+        mImageUriForced = imageUri;
     }
 
     public Uri getUri(int position) {
@@ -94,7 +100,10 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return externalCursor.getCount();
+        if (mImageUriForced == null)
+            return externalCursor.getCount();
+        else
+            return 1;
     }
 
     @Override
@@ -114,12 +123,21 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         ExifInterface exifInterface = new ExifInterface();
         Bitmap preview_bitmap = null;
 
-        externalCursor.moveToPosition(position);
-        // externalCursor.moveToPosition(getCount()-(position+1));
-        int imageID = externalCursor.getInt( externalColumnIndex );
-        Uri imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+        Uri imageUri = null;
+        if (mImageUriForced == null)
+        {
+            externalCursor.moveToPosition(position);
+            // externalCursor.moveToPosition(getCount()-(position+1));
+            int imageID = externalCursor.getInt( externalColumnIndex );
+            Log.d(TAG,"Id:" + imageID);
+            imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
+        }
+        else
+        {
+            imageUri = mImageUriForced;
+        }
 
-        Log.i(TAG,"Id:" + imageID + ", imageUri:" + imageUri);
+        Log.d(TAG,"imageUri:" + imageUri);
         try {
             exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
         } catch (Exception e) {

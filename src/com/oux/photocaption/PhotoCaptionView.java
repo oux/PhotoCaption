@@ -94,6 +94,10 @@ public class PhotoCaptionView extends Activity
                 // To be implemented
             }
         }
+
+        if (mPosition == -1) {
+            mPagerAdapter.forceUri(imageUri);
+        }
         Log.i(TAG,"new position: " + mPosition);
         mViewPager.setCurrentItem(mPosition,false);
 
@@ -148,7 +152,14 @@ public class PhotoCaptionView extends Activity
                 intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
                 Log.i(TAG,"Current:" + mViewPager.getCurrentItem());
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_STREAM, mPagerAdapter.getUri(mViewPager.getCurrentItem()));
+                if (mPosition == -1)
+                {
+                    intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                }
+                else
+                {
+                    intent.putExtra(Intent.EXTRA_STREAM, mPagerAdapter.getUri(mViewPager.getCurrentItem()));
+                }
                 intent.setType("image/jpeg");
                 startActivity(intent);
                 finish();
