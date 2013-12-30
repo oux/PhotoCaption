@@ -16,6 +16,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.view.WindowManager;
+import android.view.Display;
+import android.graphics.Point;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
@@ -32,9 +35,16 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     private int externalColumnIndex;
     static final String TAG = "photoCaptionPagerAdapter";
     private Uri mImageUriForced;
+    Point mSize;
 
     public void setContext(PhotoCaptionView context) {
         mContext = context;
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        mSize = new Point();
+        display.getSize(mSize);
+
         //Do the query
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -157,15 +167,33 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             }
         }
         try {
-            BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inSampleSize = 8;
+            String image;
             if (imageUri.getScheme().equals("content"))
             {
                 Log.i(TAG,"Content");
-                preview_bitmap=BitmapFactory.decodeFile(getRealPathFromURI(imageUri),options);
+                image = getRealPathFromURI(imageUri);
             }
             else
-                preview_bitmap=BitmapFactory.decodeFile(imageUri.getPath(),options);
+                image = imageUri.getPath();
+
+            BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inJustDecodeBounds=true;
+            BitmapFactory.decodeFile(image ,options);
+
+            int h=(int) Math.ceil(options.outHeight/(float)mSize.y);
+            int w=(int) Math.ceil(options.outWidth/(float)mSize.x);
+
+            if(h>1 || w>1){
+                if(h>w){
+                    options.inSampleSize=h;
+
+                }else{
+                    options.inSampleSize=w;
+                }
+            }
+            options.inJustDecodeBounds=false;
+
+            preview_bitmap=BitmapFactory.decodeFile(image ,options);
             photoView.setImageBitmap(preview_bitmap);
             if (description != "" && description != null && description.length() != 0)
             {
