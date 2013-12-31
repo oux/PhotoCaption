@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.SpinnerAdapter;
 import android.widget.ArrayAdapter;
 import android.database.Cursor;
+import android.view.Display;
 import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +49,7 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.content.SharedPreferences;
 
 import com.android.gallery3d.exif.ExifInterface;
@@ -70,6 +72,7 @@ public class PhotoCaptionEdit extends Activity
     AlertDialog saveDialog;
     AlertDialog deleteDialog;
     static boolean mBackToShot = false;
+    Point mSize;
 
     /** Called when the activity is first created. */
     @Override
@@ -83,6 +86,12 @@ public class PhotoCaptionEdit extends Activity
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_edit);
+
+        Display display = getWindowManager().getDefaultDisplay();
+
+        mSize = new Point();
+        display.getSize(mSize);
+
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -252,8 +261,8 @@ public class PhotoCaptionEdit extends Activity
     public void takePhoto() {
         mBackToShot = true;
         List<Intent> targetedIntents = new ArrayList<Intent>();
-        Context context = getApplicationContext();
-        final PackageManager pm = context.getPackageManager();
+        // Context context = getApplicationContext();
+        final PackageManager pm = getPackageManager();
 
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -275,7 +284,7 @@ public class PhotoCaptionEdit extends Activity
             List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
             if (appInfoList.isEmpty()) {
                 Log.e(TAG,"No application found to take a shot");
-                Toast.makeText(context,
+                Toast.makeText(this,
                         getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -285,7 +294,7 @@ public class PhotoCaptionEdit extends Activity
             for (ResolveInfo ri : appInfoList) {
                 packageName = ri.activityInfo.packageName;
                 Log.i(TAG,"packageName:" + packageName);
-                if (!packageName.equals(context.getPackageName())) {
+                if (!packageName.equals(this.getPackageName())) {
                     Intent it = new Intent("android.media.action.IMAGE_CAPTURE");
                     it.setComponent(new ComponentName(packageName, ri.activityInfo.name));
                     it.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -297,7 +306,7 @@ public class PhotoCaptionEdit extends Activity
             if (extraIntents.isEmpty())
             {
                 Log.e(TAG,"No application found to take a shot");
-                Toast.makeText(context,
+                Toast.makeText(this,
                         getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -351,18 +360,33 @@ public class PhotoCaptionEdit extends Activity
             Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
             Bitmap preview_bitmap = null;
             try {
-                File image = null;
+                String image;
                 if (imageUri.getScheme().equals("content"))
-                    image = new File(getRealPathFromURI(imageUri));
+                    image = getRealPathFromURI(imageUri);
                 else
-                    image = new File(imageUri.getPath());
+                    image = imageUri.getPath();
+
                 BitmapFactory.Options options=new BitmapFactory.Options();
-                options.inSampleSize = 8;
-                preview_bitmap=BitmapFactory.decodeStream(new FileInputStream(image),null,options);
+                options.inJustDecodeBounds=true;
+                BitmapFactory.decodeFile(image ,options);
+
+                int h=(int) Math.ceil(options.outHeight/(float)mSize.y);
+                int w=(int) Math.ceil(options.outWidth/(float)mSize.x);
+
+                if(h>1 || w>1){
+                    if(h>w){
+                        options.inSampleSize=h;
+
+                    }else{
+                        options.inSampleSize=w;
+                    }
+                }
+                options.inJustDecodeBounds=false;
+                preview_bitmap=BitmapFactory.decodeFile(image,options);
                 imageView.setImageBitmap(preview_bitmap);
                 mInitialDescription = getDescription();
                 descriptionView.setText(mInitialDescription);
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
