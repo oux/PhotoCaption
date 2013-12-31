@@ -11,6 +11,15 @@
             />
     </PreferenceCategory>
     <PreferenceCategory
+        android:title="@string/edit"
+        android:key="edit">
+        <ListPreference
+            android:key="pref_edit_camapp"
+            android:title="@string/pref_edit_camapp"
+            android:summary="@string/pref_edit_camapp_summ"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="@string/about">
         <Preference
             android:key="build_version" android:title="@string/app_name"

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 public class PhotoCaptionSettings extends PreferenceActivity {
 
     private static final String BUILD_VERSION = "build_version";
+    private static final String CAMAPP = "pref_view_camapp";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

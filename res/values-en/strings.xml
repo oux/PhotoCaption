@@ -5,6 +5,8 @@
     <string name="mode_edit">Edit Mode</string>
     <string name="mode_view">View Mode</string>
     <string name="mode_gallery">Gallery Mode</string>
+    <string name="gallery">Gallery</string>
+    <string name="edit">Edit</string>
 
     <string name="pc_edit">Photo Caption Edit</string>
     <string name="pc_gallery">Photo Caption Gallery</string>
@@ -14,7 +16,6 @@
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
-    <string name="gallery">Gallery</string>
     <string name="save">Save</string>
     <string name="capture">Capture</string>
     <string name="settings">Settings</string>
@@ -31,8 +32,12 @@
     <string name="saved">Your comment has been saved !</string>
     <string name="deleted">The image has been deleted !</string>
     <string name="noapptoshot">No application found to take the shot</string>
-    <string name="choose_cam">Choose your camera application to take the shot (Do not select Photo Caption Edit)</string>
+    <string name="choose_cam">Choose your camera application to take the shot</string>
+    <string name="not_able_to_perform">Photo Caption is not able to perform this action</string>
+    <string name="choose_each_time">Choose each time</string>
 
+    <string name="pref_edit_camapp">Select camera application</string>
+    <string name="pref_edit_camapp_summ">Choose the application to take shots</string>
     <string name="pref_gallery_whole_caption">Entire captions</string>
     <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>
     <string name="pref_photocaption_sum">By Sébastien MICHEL</string>

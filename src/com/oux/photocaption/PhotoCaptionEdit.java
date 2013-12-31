@@ -3,11 +3,7 @@ package com.oux.photocaption;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-// import java.io.OutputStream;
-// import java.io.BufferedOutputStream;
-// import java.io.FileOutputStream;
 import java.io.File;
-// import java.io.IOException;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.Charset;
 import java.io.FileInputStream;
@@ -17,9 +13,6 @@ import java.text.SimpleDateFormat;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
-// import android.os.ResultReceiver;
-// import android.os.Handler;
-// import android.os.Message;
 import android.app.ActionBar.OnNavigationListener;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,6 +27,8 @@ import android.content.ComponentName;
 import android.content.pm.LabeledIntent;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -53,14 +48,17 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.IfdId;
+import android.preference.PreferenceManager;
 
 public class PhotoCaptionEdit extends Activity
 {
-    static final String TAG = "photoCaptionEdit";
+    static final String TAG = "PhotoCaptionEdit";
+    private static final String CAMAPP = "pref_edit_camapp";
     private Uri imageUri;
     private String mInitialDescription;
     private static int SHOT = 100;
@@ -267,41 +265,58 @@ public class PhotoCaptionEdit extends Activity
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
 
-        List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (appInfoList.isEmpty()) {
-            Log.e(TAG,"No application found to take a shot");
-            Toast.makeText(context,
-                    getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String packageName = sharedPrefs.getString("pref_edit_camapp", "");
 
-        ArrayList<Intent> extraIntents = new ArrayList<Intent>();
-
-        for (ResolveInfo ri : appInfoList) {
-            String packageName = ri.activityInfo.packageName;
-            Log.i(TAG,"packageName:" + packageName);
-            if (!packageName.equals(context.getPackageName())) {
-                Intent it = new Intent("android.media.action.IMAGE_CAPTURE");
-                it.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-                it.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photo));
-                extraIntents.add(it);
+        if (isPackageExisted(packageName)) {
+            intent.setPackage(packageName);
+            startActivityForResult(intent,SHOT);
+        } else {
+            List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (appInfoList.isEmpty()) {
+                Log.e(TAG,"No application found to take a shot");
+                Toast.makeText(context,
+                        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
+                finish();
             }
-        }
 
-        if (extraIntents.isEmpty())
-        {
-            Log.e(TAG,"No application found to take a shot");
-            Toast.makeText(context,
-                    getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1),
-                getResources().getString(R.string.choose_cam));
-        Log.i(TAG,"Number of apps on choice:" + extraIntents.size());
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
-        startActivityForResult(chooserIntent,SHOT);
+            ArrayList<Intent> extraIntents = new ArrayList<Intent>();
 
+            for (ResolveInfo ri : appInfoList) {
+                packageName = ri.activityInfo.packageName;
+                Log.i(TAG,"packageName:" + packageName);
+                if (!packageName.equals(context.getPackageName())) {
+                    Intent it = new Intent("android.media.action.IMAGE_CAPTURE");
+                    it.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                    it.putExtra(MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(photo));
+                    extraIntents.add(it);
+                }
+            }
+
+            if (extraIntents.isEmpty())
+            {
+                Log.e(TAG,"No application found to take a shot");
+                Toast.makeText(context,
+                        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1),
+                    getResources().getString(R.string.choose_cam));
+            Log.i(TAG,"Number of apps on choice:" + extraIntents.size());
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
+            startActivityForResult(chooserIntent,SHOT);
+        }
+    }
+
+    public boolean isPackageExisted(String targetPackage){
+        PackageManager pm=getPackageManager();
+        try {
+            PackageInfo info=pm.getPackageInfo(targetPackage,PackageManager.GET_META_DATA);
+        } catch (NameNotFoundException e) {
+            return false;
+        }  
+        return true;
     }
 
     private void scanMedia(String path) {
