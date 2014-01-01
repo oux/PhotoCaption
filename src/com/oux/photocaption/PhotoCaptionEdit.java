@@ -123,8 +123,6 @@ public class PhotoCaptionEdit extends Activity
                 }
                 else
                 {
-                    Intent intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
-                    startActivity(intent);
                     finish();
                 }
             }
@@ -139,7 +137,6 @@ public class PhotoCaptionEdit extends Activity
         deleteDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
                 getResources().getString(R.string.donotdelete), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                //finish();
             }
         });
         deleteDialog.setButton(DialogInterface.BUTTON_POSITIVE,
@@ -218,8 +215,6 @@ public class PhotoCaptionEdit extends Activity
                 }
                 else
                 {
-                    intent = new Intent(this,PhotoCaptionGallery.class);
-                    startActivity(intent);
                     finish();
                 }
                 return true;
