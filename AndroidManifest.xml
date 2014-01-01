@@ -8,7 +8,6 @@
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19" />
 
     <application android:label="@string/app_name"
-        android:icon="@drawable/photo_caption_a"
         android:theme="@android:style/Theme.Holo">
         <!--
         TODO:
@@ -16,10 +15,22 @@
         * Activity setting:
             - Path image storage
         -->
+        <activity android:name="PhotoCaptionGallery"
+            android:label="@string/pc_gallery"
+            android:icon="@drawable/photo_caption_a"
+            android:launchMode="singleInstance"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name="PhotoCaptionEdit"
             android:label="@string/pc_edit"
             android:icon="@drawable/photo_caption_a_"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
+            android:parentActivityName="PhotoCaptionGallery"
             >
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -44,9 +55,12 @@
                 <data android:mimeType="image/jpeg" />
             </intent-filter>
         </activity>
+
         <activity android:name="PhotoCaptionView"
             android:label="@string/pc_view"
             android:icon="@drawable/photo_caption_a"
+            android:parentActivityName="PhotoCaptionGallery"
+            android:noHistory="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -59,16 +73,7 @@
                 <data android:mimeType="image/jpeg" />
             </intent-filter>
         </activity>
-        <activity android:name="PhotoCaptionGallery"
-            android:label="@string/pc_gallery"
-            android:icon="@drawable/photo_caption_a"
-            android:launchMode="singleInstance"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
         <activity android:name="PhotoCaptionSettings"
             android:label="@string/pc_settings"
             >
