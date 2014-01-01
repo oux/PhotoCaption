@@ -436,6 +436,8 @@ public class PhotoCaptionEdit extends Activity
               exifInterface.forceRewriteExif(imageUri.getPath());
           }
       } catch (Exception e) {
+          Toast.makeText(this,
+                    getResources().getString(R.string.tagnotsaved), Toast.LENGTH_LONG).show();
           Log.e(TAG, "forceRewriteExif");
           e.printStackTrace();
       }
