@@ -74,7 +74,7 @@ public class PhotoCaptionView extends Activity
                 Log.i(TAG,"Action Send:" + intent.getData());
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             } else {
-                Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
                 finish();
             }
             if (imageUri.getScheme().equals("content"))
@@ -91,7 +91,8 @@ public class PhotoCaptionView extends Activity
                 mPosition = mPagerAdapter.getPosition(imageUri.getPath());
             } else {
                 Log.i(TAG,"To be implemented: Scheme:" + imageUri.getScheme() + ", Uri:" + imageUri);
-                // To be implemented
+                Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
+                finish();
             }
         }
 
