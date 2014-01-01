@@ -63,11 +63,11 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     public void forceUri(Uri imageUri)
     {
         mImageUriForced = imageUri;
+        notifyDataSetChanged();
     }
 
     public Uri getUri(int position) {
         externalCursor.moveToPosition(position);
-        // externalCursor.moveToPosition(getCount()-(position+1));
         int imageID = externalCursor.getInt( externalColumnIndex );
         return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
     }
@@ -89,7 +89,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         String[] projection = {MediaStore.Images.Media._ID};
         String selection = MediaStore.Images.ImageColumns.DATA + " LIKE ?";
         String [] selectionArgs = {filePath};
-        // TODO This will break if we have no matching item in the MediaStore.
         Cursor cursor = mContext.getContentResolver().query(
                 externalContentUri,projection,
                 selection,selectionArgs,
@@ -120,15 +119,12 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     public View instantiateItem(ViewGroup container, int position) {
         Log.i(TAG,"VIEW:" + position + ", container:" + container
                 + ", context:" + container.getContext() + ", mContext:" + mContext);
-        // PhotoViewCaption photoView = new PhotoViewCaption(container.getContext(),null);
         LayoutInflater inflater = (LayoutInflater) container.getContext()
             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        // imageView = (MyImageView) 
         View view = inflater.inflate(R.layout.view, null);
         PhotoView photoView = (PhotoView) view.findViewById(R.id.ImageView);
         TextView descriptionView = (TextView) view.findViewById(R.id.Description);
-        // PhotoViewCaption photoView = new PhotoViewCaption(container.getContext(),descriptionView);
 
         ExifInterface exifInterface = new ExifInterface();
         Bitmap preview_bitmap = null;
@@ -137,7 +133,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         if (mImageUriForced == null)
         {
             externalCursor.moveToPosition(position);
-            // externalCursor.moveToPosition(getCount()-(position+1));
             int imageID = externalCursor.getInt( externalColumnIndex );
             Log.d(TAG,"Id:" + imageID);
             imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
