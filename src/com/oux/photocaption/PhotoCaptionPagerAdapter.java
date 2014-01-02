@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.view.WindowManager;
 import android.view.Display;
 import android.graphics.Point;
+import android.graphics.Matrix;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
@@ -171,6 +172,8 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             else
                 image = imageUri.getPath();
 
+            int orientation = getOrientation(imageUri);
+
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inJustDecodeBounds=true;
             BitmapFactory.decodeFile(image ,options);
@@ -189,6 +192,16 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             options.inJustDecodeBounds=false;
 
             preview_bitmap=BitmapFactory.decodeFile(image ,options);
+
+
+            if (orientation > 1) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(orientation);
+
+                preview_bitmap = Bitmap.createBitmap(preview_bitmap, 0, 0, preview_bitmap.getWidth(),
+                        preview_bitmap.getHeight(), matrix, true);
+            }
+
             photoView.setImageBitmap(preview_bitmap);
             if (description != "" && description != null && description.length() != 0)
             {
@@ -209,6 +222,20 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
         return view;
     }
+
+    public int getOrientation(Uri photoUri) {
+        /* it's on the external media. */
+        Cursor cursor = mContext.getContentResolver().query(photoUri,
+                new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
+
+        if (cursor.getCount() != 1) {
+            return -1;
+        }
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
+
 
     public String getRealPathFromURI(Uri uri) {
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
