@@ -8,6 +8,7 @@
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19" />
 
     <application android:label="@string/app_name"
+        android:icon="@drawable/photo_caption_a"
         android:theme="@android:style/Theme.Holo">
         <!--
         TODO:
