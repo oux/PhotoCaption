@@ -136,16 +136,21 @@ public class PhotoCaptionView extends Activity
     private Intent getDefaultIntent() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/jpeg");
+        String description;
         if (mPosition == -1)
         {
             intent.putExtra(Intent.EXTRA_STREAM, imageUri);
-            intent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.shared_via_photocaption) + ":\n" + mPagerAdapter.getDescription(imageUri) );
+            description = mPagerAdapter.getDescription(imageUri);
         }
         else
         {
             intent.putExtra(Intent.EXTRA_STREAM, mPagerAdapter.getUri(mViewPager.getCurrentItem()));
-            intent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.shared_via_photocaption) + ":\n" + mPagerAdapter.getDescription(mPagerAdapter.getUri(mViewPager.getCurrentItem())) );
+            description = mPagerAdapter.getDescription(mPagerAdapter.getUri(mViewPager.getCurrentItem()));
         }
+        if (description.equals("") || description.equals("<BINARY DATA>"))
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.shared_via_photocaption) );
+        else
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.shared_via_photocaption) + ":\n" + description );
 
         return intent;
     }

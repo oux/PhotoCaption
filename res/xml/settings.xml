@@ -20,6 +20,16 @@
             />
     </PreferenceCategory>
     <PreferenceCategory
+        android:title="@string/view"
+        android:key="view">
+        <CheckBoxPreference
+            android:key="pref_view_binary_info_signalisation"
+            android:title="@string/pref_view_binary_info_signalisation"
+            android:summary="@string/pref_view_binary_info_signalisation_sum"
+            android:defaultValue="false" 
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="@string/about">
         <Preference
             android:key="build_version" android:title="@string/app_name"

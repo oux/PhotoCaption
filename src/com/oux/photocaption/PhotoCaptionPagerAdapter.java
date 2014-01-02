@@ -3,6 +3,7 @@ package com.oux.photocaption;
 import android.support.v4.view.PagerAdapter;
 import android.provider.MediaStore;
 import android.content.Context;
+import android.content.SharedPreferences;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.Charset;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.view.WindowManager;
 import android.view.Display;
 import android.graphics.Point;
 import android.graphics.Matrix;
+import android.preference.PreferenceManager;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
@@ -223,7 +225,11 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
                 Charset.forName("ISO-8859-1").newEncoder();
 
             if (! encoder.canEncode(description)) {
-                return "<BINARY DATA>";
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                if (sharedPrefs.getBoolean("pref_view_binary_info_signalisation", false))
+                    return "";
+                else
+                    return "<BINARY DATA>";
             }
             return description;
         }

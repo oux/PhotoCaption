@@ -17,9 +17,11 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import android.webkit.MimeTypeMap;
+import android.preference.PreferenceManager;
 
 import android.R;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -125,7 +127,11 @@ public class ImageLoader {
                 Charset.forName("US-ASCII").newEncoder();
 
             if (! encoder.canEncode(description)) {
-                description="<BINARY DATA>";
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                if (sharedPrefs.getBoolean("pref_view_binary_info_signalisation", false))
+                    description = "";
+                else
+                    description = "<BINARY DATA>";
             }
         }
         return new Pair<Bitmap, String>(loadThumbnailImage(uri), description);
