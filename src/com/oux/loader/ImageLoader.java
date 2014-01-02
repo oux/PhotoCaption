@@ -28,6 +28,7 @@ import android.util.Pair;
 import com.oux.loader.MemoryCache;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.graphics.Matrix;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
@@ -127,20 +128,46 @@ public class ImageLoader {
                 description="<BINARY DATA>";
             }
         }
-        return new Pair<Bitmap, String>(loadThumbnailImage(uri.toString()), description);
+        return new Pair<Bitmap, String>(loadThumbnailImage(uri), description);
     }
 
     public int getCount() {
         return externalCursor.getCount();
     }
 
-    protected Bitmap loadThumbnailImage( String url ) {
+    protected Bitmap loadThumbnailImage( Uri uri ) {
         // Get original image ID
+        String url = uri.toString();
+        int orientation = getOrientation(uri);
+
         int originalImageId = Integer.parseInt(url.substring(url.lastIndexOf("/") + 1, url.length()));
 
         // Get (or create upon demand) the micro thumbnail for the original image.
-        return MediaStore.Images.Thumbnails.getThumbnail(mContext.getContentResolver(),
+        Bitmap thumbnail = MediaStore.Images.Thumbnails.getThumbnail(mContext.getContentResolver(),
                 originalImageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
+
+        if (orientation > 1) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(orientation);
+
+            thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(),
+                    thumbnail.getHeight(), matrix, true);
+        }
+
+        return thumbnail;
+    }
+
+    public int getOrientation(Uri photoUri) {
+        /* it's on the external media. */
+        Cursor cursor = mContext.getContentResolver().query(photoUri,
+                new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
+
+        if (cursor.getCount() != 1) {
+            return -1;
+        }
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
     }
 
     //Task for the queue
