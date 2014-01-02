@@ -22,11 +22,9 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.app.ActionBar;
-// import android.graphics.drawable.BitmapDrawable;
+import android.widget.ShareActionProvider;
 
 import android.support.v4.view.ViewPager;
-
-// Add Zoom, slide and change exifInterface
 
 public class PhotoCaptionView extends Activity
 {
@@ -36,6 +34,7 @@ public class PhotoCaptionView extends Activity
     ViewPager mViewPager;
     PhotoCaptionPagerAdapter mPagerAdapter;
     int mPosition;
+    ShareActionProvider mShareActionProvider;
 
     /** Called when the activity is first created. */
     @Override
@@ -124,7 +123,35 @@ public class PhotoCaptionView extends Activity
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.view_actions, menu);
+
+        // Set up ShareActionProvider's default share intent
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        mShareActionProvider = (ShareActionProvider)
+            shareItem.getActionProvider();
+        mShareActionProvider.setShareIntent(getDefaultIntent());
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private Intent getDefaultIntent() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpeg");
+        if (mPosition == -1)
+        {
+            intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        }
+        else
+        {
+            intent.putExtra(Intent.EXTRA_STREAM, mPagerAdapter.getUri(mViewPager.getCurrentItem()));
+        }
+
+        return intent;
+    }
+
+    // Somewhere in the application.
+    public void doShare(Intent shareIntent) {
+        // When you want to share set the share intent.
+        mShareActionProvider.setShareIntent(shareIntent);
     }
 
     @Override
