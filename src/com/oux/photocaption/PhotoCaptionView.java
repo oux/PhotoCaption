@@ -139,10 +139,12 @@ public class PhotoCaptionView extends Activity
         if (mPosition == -1)
         {
             intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.shared_via_photocaption) + ":\n" + mPagerAdapter.getDescription(imageUri) );
         }
         else
         {
             intent.putExtra(Intent.EXTRA_STREAM, mPagerAdapter.getUri(mViewPager.getCurrentItem()));
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.shared_via_photocaption) + ":\n" + mPagerAdapter.getDescription(mPagerAdapter.getUri(mViewPager.getCurrentItem())) );
         }
 
         return intent;
@@ -200,13 +202,5 @@ public class PhotoCaptionView extends Activity
             }
         }
         return true;
-    }
-
-    public void sharePhoto() {
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND,
-                Uri.parse("file:///sdcard/image.png"));
-        shareIntent.setType("image/png");
-        this.setResult(Activity.RESULT_OK, shareIntent);
-        this.finish();
     }
 }

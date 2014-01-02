@@ -127,7 +127,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         PhotoView photoView = (PhotoView) view.findViewById(R.id.ImageView);
         TextView descriptionView = (TextView) view.findViewById(R.id.Description);
 
-        ExifInterface exifInterface = new ExifInterface();
         Bitmap preview_bitmap = null;
 
         Uri imageUri = null;
@@ -142,26 +141,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         {
             imageUri = mImageUriForced;
         }
-
         Log.d(TAG,"imageUri:" + imageUri);
-        try {
-            exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
-        String description = null;
-        if (tag != null)
-        {
-            description = tag.getValueAsString();
-            CharsetEncoder encoder =
-                Charset.forName("ISO-8859-1").newEncoder();
-
-            if (! encoder.canEncode(description)) {
-                description="<BINARY DATA>";
-            }
-        }
+        String description = getDescription(imageUri);
         try {
             String image;
             if (imageUri.getScheme().equals("content"))
@@ -221,6 +203,31 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         }
 
         return view;
+    }
+
+    public String getDescription(Uri imageUri)
+    {
+        ExifInterface exifInterface = new ExifInterface();
+        try {
+            exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+        String description = null;
+        if (tag != null)
+        {
+            description = tag.getValueAsString();
+            CharsetEncoder encoder =
+                Charset.forName("ISO-8859-1").newEncoder();
+
+            if (! encoder.canEncode(description)) {
+                return "<BINARY DATA>";
+            }
+            return description;
+        }
+        return "";
     }
 
     public int getOrientation(Uri photoUri) {

@@ -38,6 +38,7 @@
     <string name="not_able_to_perform">Photo Caption is not able to perform this action</string>
     <string name="choose_each_time">Choose each time</string>
     <string name="tagnotsaved">Failed to save the comment</string>
+    <string name="shared_via_photocaption">Shared via PhotoCaption</string>
 
     <string name="pref_edit_camapp">Select camera application</string>
     <string name="pref_edit_camapp_summ">Choose the application to take shots</string>
