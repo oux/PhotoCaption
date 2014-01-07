@@ -47,7 +47,7 @@ public class PhotoCaptionView extends Activity
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        // actionBar.hide();
+        actionBar.hide();
 
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_view);
@@ -101,21 +101,6 @@ public class PhotoCaptionView extends Activity
         Log.i(TAG,"new position: " + mPosition);
         mViewPager.setCurrentItem(mPosition,false);
 
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        /*
-        if (imageView != null)
-        {
-            BitmapDrawable bd = (BitmapDrawable)imageView.getDrawable();
-            if (bd != null)
-                bd.getBitmap().recycle();
-            imageView.setImageBitmap(null);
-        }
-        */
-        super.onDestroy();
     }
 
     @Override
@@ -196,16 +181,11 @@ public class PhotoCaptionView extends Activity
         }
     }
 
-    // TODO: re enable is code
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (actionBar.isShowing()) {
-                actionBar.hide();
-            } else {
-                actionBar.show();
-            }
+    public void toggleActionBar() {
+        if (actionBar.isShowing()) {
+            actionBar.hide();
+        } else {
+            actionBar.show();
         }
-        return true;
     }
 }

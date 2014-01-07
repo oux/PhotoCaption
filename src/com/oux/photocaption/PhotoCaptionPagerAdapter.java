@@ -33,6 +33,10 @@ import com.android.gallery3d.exif.IfdId;
 import uk.co.senab.photoview.PhotoView;
 import android.webkit.MimeTypeMap;
 
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
+import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
+
 class PhotoCaptionPagerAdapter extends PagerAdapter {
 
     private PhotoCaptionView mContext;
@@ -43,6 +47,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     static final String TAG = "photoCaptionPagerAdapter";
     private Uri mImageUriForced;
     Point mSize;
+    private PhotoViewAttacher mAttacher;
 
     public void setContext(PhotoCaptionView context) {
         mContext = context;
@@ -201,6 +206,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
                 Log.i(TAG,"Hidding");
                 descriptionView.setVisibility(View.INVISIBLE);
             }
+            Log.i(TAG,"photoView: " + photoView);
+            mAttacher = new PhotoViewAttacher(photoView);
+            mAttacher.setOnPhotoTapListener(new PhotoTapListener());
 
             // Now just add PhotoView to ViewPager and return it
             container.addView(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -210,6 +218,14 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
         return view;
     }
+
+    private class PhotoTapListener implements OnPhotoTapListener {
+        @Override
+        public void onPhotoTap(View view, float x, float y) {
+            mContext.toggleActionBar();
+        }
+    }
+
 
     public String getDescription(Uri imageUri)
     {
