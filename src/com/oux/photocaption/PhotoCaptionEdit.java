@@ -73,6 +73,8 @@ public class PhotoCaptionEdit extends Activity
     AlertDialog deleteDialog;
     static boolean mBackToShot = false;
     Point mSize;
+    SharedPreferences mSharedPrefs;
+    int mTagId;
 
     /** Called when the activity is first created. */
     @Override
@@ -92,6 +94,9 @@ public class PhotoCaptionEdit extends Activity
         mSize = new Point();
         display.getSize(mSize);
 
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String tagId = mSharedPrefs.getString("pref_edit_exif_field", Integer.toString(ExifInterface.TAG_USER_COMMENT));
+        mTagId = Integer.parseInt(tagId);
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -269,8 +274,7 @@ public class PhotoCaptionEdit extends Activity
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String packageName = sharedPrefs.getString("pref_edit_camapp", "");
+        String packageName = mSharedPrefs.getString("pref_edit_camapp", "");
 
         if (isPackageExisted(packageName)) {
             intent.setPackage(packageName);
@@ -396,7 +400,7 @@ public class PhotoCaptionEdit extends Activity
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_IMAGE_DESCRIPTION);
+        ExifTag tag = exifInterface.getTag(mTagId);
         if (tag != null)
         {
             String description = tag.getValueAsString();
@@ -422,7 +426,7 @@ public class PhotoCaptionEdit extends Activity
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
 
-      ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_IMAGE_DESCRIPTION, decompose(description));
+      ExifTag tag = exifInterface.buildTag(mTagId, decompose(description));
       if(tag != null) {
           exifInterface.setTag(tag);
       }

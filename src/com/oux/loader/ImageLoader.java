@@ -1,5 +1,9 @@
 package com.oux.loader;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Arrays;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -118,21 +122,37 @@ public class ImageLoader {
             e.printStackTrace();
         }
         cursor.close();
-        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_IMAGE_DESCRIPTION);
-        String description = null;
-        if (tag != null)
-        {
-            description = tag.getValueAsString();
-            CharsetEncoder encoder =
-                Charset.forName("US-ASCII").newEncoder();
 
-            if (! encoder.canEncode(description)) {
-                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-                if (sharedPrefs.getBoolean("pref_view_binary_info_signalisation", false))
-                    description = "";
-                else
-                    description = "<BINARY DATA>";
+        String description = "";
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        Set<String> set = sharedPrefs.getStringSet("pref_gallery_exif_field",
+                new HashSet<String>(Arrays.asList(Integer.toString(ExifInterface.TAG_USER_COMMENT))));
+
+        for (String tagId: set)
+        {
+            ExifTag tag = exifInterface.getTag(Integer.parseInt(tagId));
+            if (tag == null)
+                continue;
+            if (tag.getComponentCount() < 8) {
+                continue;
             }
+
+            String desc = tag.getValueAsString();
+            CharsetEncoder encoder =
+                Charset.forName("ISO-8859-1").newEncoder();
+
+            if (!encoder.canEncode(desc)) {
+                if (sharedPrefs.getBoolean("pref_binary_info_signalisation", false))
+                    desc = "";
+                else
+                    desc = "<BINARY DATA>";
+            }
+
+            if (!desc.equals(""))
+                if (description.equals(""))
+                    description = desc;
+                else
+                    description += "\n" + desc;
         }
         return new Pair<Bitmap, String>(loadThumbnailImage(uri), description);
     }
@@ -173,7 +193,9 @@ public class ImageLoader {
         }
 
         cursor.moveToFirst();
-        return cursor.getInt(0);
+        int orientation = cursor.getInt(0);
+        cursor.close();
+        return orientation;
     }
 
     //Task for the queue

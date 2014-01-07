@@ -1,5 +1,9 @@
 package com.oux.photocaption;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Arrays;
+
 import android.support.v4.view.PagerAdapter;
 import android.provider.MediaStore;
 import android.content.Context;
@@ -209,31 +213,44 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
     public String getDescription(Uri imageUri)
     {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         ExifInterface exifInterface = new ExifInterface();
         try {
             exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
         } catch (Exception e) {
             e.printStackTrace();
         }
+        String description = "";
+        Set<String> set = sharedPrefs.getStringSet("pref_view_exif_field",
+                new HashSet<String>(Arrays.asList(Integer.toString(ExifInterface.TAG_USER_COMMENT))));
 
-        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_IMAGE_DESCRIPTION);
-        String description = null;
-        if (tag != null)
+        for (String tagId: set)
         {
-            description = tag.getValueAsString();
+            ExifTag tag = exifInterface.getTag(Integer.parseInt(tagId));
+            if (tag == null)
+                continue;
+            if (tag.getComponentCount() < 8) {
+                continue;
+            }
+
+            String desc = tag.getValueAsString();
             CharsetEncoder encoder =
                 Charset.forName("ISO-8859-1").newEncoder();
 
-            if (! encoder.canEncode(description)) {
-                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-                if (sharedPrefs.getBoolean("pref_view_binary_info_signalisation", false))
-                    return "";
+            if (!encoder.canEncode(desc)) {
+                if (sharedPrefs.getBoolean("pref_binary_info_signalisation", false))
+                    desc = "";
                 else
-                    return "<BINARY DATA>";
+                    desc = "<BINARY DATA>";
             }
-            return description;
+
+            if (!desc.equals(""))
+                if (description.equals(""))
+                    description = desc;
+                else
+                    description += "\n" + desc;
         }
-        return "";
+        return description;
     }
 
     public int getOrientation(Uri photoUri) {
@@ -246,7 +263,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         }
 
         cursor.moveToFirst();
-        return cursor.getInt(0);
+        int orientation = cursor.getInt(0);
+        cursor.close();
+        return orientation;
     }
 
 
