@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.widget.Toast;
 import android.os.Environment;
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
 import android.widget.Button;
 import android.view.Window;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.app.ActionBar;
 import android.widget.ShareActionProvider;
+import android.preference.PreferenceManager;
 
 import android.support.v4.view.ViewPager;
 
@@ -47,7 +49,9 @@ public class PhotoCaptionView extends Activity
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.hide();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!sharedPrefs.getBoolean("pref_view_action_bar", false))
+            actionBar.hide();
 
         actionBar.setTitle(R.string.app_name);
         actionBar.setSubtitle(R.string.mode_view);

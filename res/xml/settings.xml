@@ -24,6 +24,12 @@
     <PreferenceCategory
         android:title="@string/view"
         android:key="view">
+        <CheckBoxPreference
+            android:key="pref_view_action_bar"
+            android:title="@string/pref_view_action_bar"
+            android:summary="@string/pref_view_action_bar_summ"
+            android:defaultValue="false" 
+            />
         <MultiSelectListPreference
             android:key="pref_view_exif_field"
             android:title="@string/pref_exif_field"
