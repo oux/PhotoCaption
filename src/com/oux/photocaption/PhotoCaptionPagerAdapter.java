@@ -216,7 +216,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             e.printStackTrace();
         }
 
-        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_IMAGE_DESCRIPTION);
         String description = null;
         if (tag != null)
         {

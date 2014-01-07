@@ -396,7 +396,7 @@ public class PhotoCaptionEdit extends Activity
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_USER_COMMENT);
+        ExifTag tag = exifInterface.getTag(ExifInterface.TAG_IMAGE_DESCRIPTION);
         if (tag != null)
         {
             String description = tag.getValueAsString();
@@ -422,7 +422,7 @@ public class PhotoCaptionEdit extends Activity
       Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
 
-      ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_USER_COMMENT, decompose(description));
+      ExifTag tag = exifInterface.buildTag(ExifInterface.TAG_IMAGE_DESCRIPTION, decompose(description));
       if(tag != null) {
           exifInterface.setTag(tag);
       }
