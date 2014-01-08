@@ -19,7 +19,8 @@
         <activity android:name="PhotoCaptionGallery"
             android:label="@string/pc_gallery"
             android:icon="@drawable/photo_caption_a"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.oux.photocaption.gallery"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,6 +33,7 @@
             android:icon="@drawable/photo_caption_a_"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
             android:parentActivityName="PhotoCaptionGallery"
+            android:taskAffinity="com.oux.photocaption.edit"
             >
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -65,10 +67,8 @@
             android:label="@string/pc_view"
             android:icon="@drawable/photo_caption_a"
             android:parentActivityName="PhotoCaptionGallery"
+            android:taskAffinity="com.oux.photocaption.gallery"
             >
-            <!--
-            android:noHistory="true"
-            -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
