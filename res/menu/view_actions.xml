@@ -9,12 +9,6 @@
         android:actionProviderClass="android.widget.ShareActionProvider"
         />
     <item
-        android:id="@+id/action_gallery"
-        android:title="@string/gallery"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:showAsAction="ifRoom|withText"
-        />
-    <item
         android:id="@+id/action_capture"
         android:title="@string/capture"
         android:icon="@android:drawable/ic_menu_camera"
@@ -25,5 +19,12 @@
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/edit"
         android:showAsAction="always"
+        />
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:showAsAction="ifRoom|withText"
+        android:orderInCategory="100"
         />
 </menu>

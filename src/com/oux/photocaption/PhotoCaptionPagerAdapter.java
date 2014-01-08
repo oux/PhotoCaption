@@ -48,6 +48,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     private Uri mImageUriForced;
     Point mSize;
     private PhotoViewAttacher mAttacher;
+    SharedPreferences mSharedPrefs;
 
     public void setContext(PhotoCaptionView context) {
         mContext = context;
@@ -56,6 +57,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         Display display = wm.getDefaultDisplay();
         mSize = new Point();
         display.getSize(mSize);
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         //Do the query
         externalContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -229,7 +231,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
     public String getDescription(Uri imageUri)
     {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         ExifInterface exifInterface = new ExifInterface();
         try {
             exifInterface.readExif(mContext.getContentResolver().openInputStream(imageUri));
@@ -237,7 +238,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             e.printStackTrace();
         }
         String description = "";
-        Set<String> set = sharedPrefs.getStringSet("pref_view_exif_field",
+        Set<String> set = mSharedPrefs.getStringSet("pref_view_exif_field",
                 new HashSet<String>(Arrays.asList(Integer.toString(ExifInterface.TAG_USER_COMMENT))));
 
         for (String tagId: set)
@@ -254,7 +255,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
                 Charset.forName("ISO-8859-1").newEncoder();
 
             if (!encoder.canEncode(desc)) {
-                if (sharedPrefs.getBoolean("pref_binary_info_signalisation", false))
+                if (mSharedPrefs.getBoolean("pref_binary_info_signalisation", false))
                     desc = "";
                 else
                     desc = "<BINARY DATA>";

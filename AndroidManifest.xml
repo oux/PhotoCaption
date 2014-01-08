@@ -65,8 +65,10 @@
             android:label="@string/pc_view"
             android:icon="@drawable/photo_caption_a"
             android:parentActivityName="PhotoCaptionGallery"
-            android:noHistory="true"
             >
+            <!--
+            android:noHistory="true"
+            -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

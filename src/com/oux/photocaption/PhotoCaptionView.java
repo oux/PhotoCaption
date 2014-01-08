@@ -31,6 +31,7 @@ import android.support.v4.view.ViewPager;
 public class PhotoCaptionView extends Activity
 {
     static final String TAG = "photoCaptionView";
+    private static int SETTINGS = 101;
     private Uri imageUri;
     ActionBar actionBar;
     ViewPager mViewPager;
@@ -62,6 +63,7 @@ public class PhotoCaptionView extends Activity
         String type = intent.getType();
         mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
 
+        // Check PagerAdapter Constructors vs GridViewAdapter Constructors to pass Context
         mPagerAdapter = new PhotoCaptionPagerAdapter();
         mPagerAdapter.setContext(this);
 		mViewPager.setAdapter(mPagerAdapter);
@@ -159,10 +161,9 @@ public class PhotoCaptionView extends Activity
                 startActivity(intent);
                 finish();
                 return true;
-            case R.id.action_gallery:
-                intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
-                startActivity(intent);
-                finish();
+            case R.id.action_settings:
+                intent = new Intent(getApplicationContext(),PhotoCaptionSettings.class);
+                startActivityForResult(intent,SETTINGS);
                 return true;
             case R.id.action_edit:
                 intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
@@ -184,6 +185,17 @@ public class PhotoCaptionView extends Activity
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SETTINGS) {
+            // Trick to invalidate pageView
+            mViewPager.setAdapter(mPagerAdapter);
+            mViewPager.setCurrentItem(mPosition,false);
+        }
+    }
+
 
     public void toggleActionBar() {
         if (actionBar.isShowing()) {

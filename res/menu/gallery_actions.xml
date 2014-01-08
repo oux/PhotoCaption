@@ -16,11 +16,9 @@
         />
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom|withText"
         android:title="@string/settings"
-        android:icon="@android:drawable/ic_menu_preferences"/>
-    <!--
-        ic_menu_preferences=""
-        -->
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:showAsAction="ifRoom|withText"
+        android:orderInCategory="100"
+        />
 </menu>

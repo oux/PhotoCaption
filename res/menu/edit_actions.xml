@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/action_gallery"
-        android:title="@string/gallery"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:showAsAction="ifRoom|withText"
-        />
-    <item
         android:id="@+id/action_capture"
         android:title="@string/capture"
         android:icon="@android:drawable/ic_menu_camera"
-        android:showAsAction="ifRoom|withText"
-        />
-    <item
-        android:id="@+id/action_del"
-        android:title="@string/delete"
-        android:icon="@android:drawable/ic_menu_delete"
         android:showAsAction="always"
         />
     <item
@@ -29,5 +17,18 @@
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/save"
         android:showAsAction="always"
+        />
+    <item
+        android:id="@+id/action_del"
+        android:title="@string/delete"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:showAsAction="ifRoom|withText"
+        />
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:showAsAction="ifRoom|withText"
+        android:orderInCategory="100"
         />
 </menu>

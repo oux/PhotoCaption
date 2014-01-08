@@ -64,6 +64,7 @@ public class PhotoCaptionEdit extends Activity
     private Uri imageUri;
     private String mInitialDescription;
     private static int SHOT = 100;
+    private static int SETTINGS = 101;
     EditText descriptionView;
     ImageView imageView;
     File mFile;
@@ -207,10 +208,9 @@ public class PhotoCaptionEdit extends Activity
                 else
                     saveDialog.show();
                 return true;
-            case R.id.action_gallery:
-                intent = new Intent(this,PhotoCaptionGallery.class);
-                startActivity(intent);
-                finish();
+            case R.id.action_settings:
+                intent = new Intent(getApplicationContext(),PhotoCaptionSettings.class);
+                startActivityForResult(intent,SETTINGS);
                 return true;
             case R.id.action_save:
                 setDescription(descriptionView.getText().toString());
@@ -255,6 +255,11 @@ public class PhotoCaptionEdit extends Activity
                 startActivity(intent);
                 finish();
             }
+        }
+        if (requestCode == SETTINGS) {
+            String tagId = mSharedPrefs.getString("pref_edit_exif_field", Integer.toString(ExifInterface.TAG_USER_COMMENT));
+            mTagId = Integer.parseInt(tagId);
+            handleImage();
         }
     }
 
