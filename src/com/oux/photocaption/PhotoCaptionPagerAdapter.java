@@ -8,6 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.provider.MediaStore;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.Intent;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.Charset;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import android.webkit.MimeTypeMap;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
+import android.view.View.OnLongClickListener;
 
 class PhotoCaptionPagerAdapter extends PagerAdapter {
 
@@ -210,6 +212,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             }
             Log.i(TAG,"photoView: " + photoView);
             mAttacher = new PhotoViewAttacher(photoView);
+            PhotoEditListener photoEditListener = new PhotoEditListener();
+            photoEditListener.setUri(imageUri);
+            mAttacher.setOnLongClickListener(photoEditListener);
             mAttacher.setOnPhotoTapListener(new PhotoTapListener());
 
             // Now just add PhotoView to ViewPager and return it
@@ -219,6 +224,28 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         }
 
         return view;
+    }
+
+    private class PhotoEditListener implements OnLongClickListener {
+        Uri mUri;
+
+        public void setUri(Uri uri) {
+            mUri = uri;
+            Log.d(TAG,"mUri:" + mUri);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            Intent intent = new Intent(mContext,PhotoCaptionEdit.class);
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, mUri);
+            Log.d(TAG,"Extra:" + mUri);
+            mContext.startActivity(intent);
+            mContext.finish();
+            return true;
+        }
+
     }
 
     private class PhotoTapListener implements OnPhotoTapListener {
