@@ -73,6 +73,7 @@ public class PhotoCaptionEdit extends Activity
     AlertDialog saveDialog;
     AlertDialog deleteDialog;
     static boolean mBackToShot = false;
+    static boolean mOneMoreShot = false;
     Point mSize;
     SharedPreferences mSharedPrefs;
     int mTagId;
@@ -106,6 +107,8 @@ public class PhotoCaptionEdit extends Activity
         Log.d(TAG,"intent:" + intent + " action:" + action + " type:" + type);
         imageView = (ImageView) findViewById(R.id.ImageView);
         descriptionView = (EditText)findViewById(R.id.Description);
+        mBackToShot = intent.getBooleanExtra("backToShot",false);
+        Log.i(TAG,"mBackToShot:" + mBackToShot);
 
         // Dialogs
         saveDialog = new AlertDialog.Builder(
@@ -117,6 +120,11 @@ public class PhotoCaptionEdit extends Activity
         saveDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
                 getResources().getString(R.string.donotsave), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                if (mOneMoreShot)
+                {
+                    Intent intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
+                    startActivity(intent);
+                }
                 finish();
             }
         });
@@ -126,7 +134,7 @@ public class PhotoCaptionEdit extends Activity
                 setDescription(descriptionView.getText().toString());
                 Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
-                if (mBackToShot)
+                if (mBackToShot || mOneMoreShot)
                 {
                     Intent intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
                     startActivity(intent);
@@ -158,7 +166,6 @@ public class PhotoCaptionEdit extends Activity
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
-        mBackToShot=false;
         if (Intent.ACTION_EDIT.equals(action))
         {
             Log.d(TAG,"Action: Edit");
@@ -201,15 +208,28 @@ public class PhotoCaptionEdit extends Activity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_capture:
-                intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
-                startActivity(intent);
+                if (mInitialDescription.equals(descriptionView.getText().toString()))
+                {
+                    intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else
+                {
+                    mOneMoreShot=true;
+                    saveDialog.show();
+                }
                 return true;
             case R.id.action_del:
                 deleteDialog.show();
                 return true;
             case R.id.action_cancel:
                 if (mInitialDescription.equals(descriptionView.getText().toString()))
+                {
+                    intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
+                    startActivity(intent);
                     finish();
+                }
                 else
                     saveDialog.show();
                 return true;
@@ -222,7 +242,7 @@ public class PhotoCaptionEdit extends Activity
                 if (mBackToShot)
                     intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
                 else
-                    intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
+                    intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
                 startActivity(intent);
                 finish();
                 return true;

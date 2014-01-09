@@ -64,6 +64,7 @@ public class PhotoCaptionCapture extends Activity
     private static int SHOT = 100;
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
     SharedPreferences mSharedPrefs;
+    private boolean mBackToShot = true;
 
     /** Called when the activity is first created. */
     @Override
@@ -75,10 +76,10 @@ public class PhotoCaptionCapture extends Activity
 
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Get intent, action and MIME type
+        // Get intent
         Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
+        mBackToShot = intent.getBooleanExtra("backToShot",true);
+        Log.i(TAG,"mBackToShot:" + mBackToShot);
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
@@ -98,6 +99,8 @@ public class PhotoCaptionCapture extends Activity
                 intent.setAction(Intent.ACTION_SEND);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                if (mBackToShot)
+                    intent.putExtra("backToShot",true);
                 startActivity(intent);
                 finish();
             } else {
