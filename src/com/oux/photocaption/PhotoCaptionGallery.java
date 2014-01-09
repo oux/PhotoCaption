@@ -170,23 +170,28 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gallery_actions, menu);
+        /*
         MenuItem menuItem = menu.findItem(R.id.action_search);
 
         // When using the support library, the setOnActionExpandListener() method is
         // static and accepts the MenuItem object as an argument
-        menuItem.setOnActionExpandListener(new OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Do something when collapsed
-                return true;  // Return true to collapse action view
-            }
+        menuItem.setOnActionExpandListener(
+                new OnActionExpandListener() {
 
-        @Override
-        public boolean onMenuItemActionExpand(MenuItem item) {
-            // Do something when expanded
-            return true;  // Return true to expand action view
-        }
-        });
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        // Do something when collapsed
+                        return true;  // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        // Do something when expanded
+                        return true;  // Return true to expand action view
+                    }
+                }
+        );
+            */
 
         return super.onCreateOptionsMenu(menu);
     }
