@@ -133,9 +133,6 @@ public class ImageLoader {
             ExifTag tag = exifInterface.getTag(Integer.parseInt(tagId));
             if (tag == null)
                 continue;
-            if (tag.getComponentCount() < 8) {
-                continue;
-            }
 
             String desc = tag.getValueAsString();
             CharsetEncoder encoder =

@@ -157,7 +157,7 @@ public class PhotoCaptionView extends Activity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_capture:
-                intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
+                intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
                 startActivity(intent);
                 finish();
                 return true;

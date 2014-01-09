@@ -214,6 +214,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             mAttacher = new PhotoViewAttacher(photoView);
             PhotoEditListener photoEditListener = new PhotoEditListener();
             photoEditListener.setUri(imageUri);
+            // photoEditListener.setParent(mAttacher);
             mAttacher.setOnLongClickListener(photoEditListener);
             mAttacher.setOnPhotoTapListener(new PhotoTapListener());
 
@@ -228,6 +229,7 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
     private class PhotoEditListener implements OnLongClickListener {
         Uri mUri;
+        // weakReference PhotoViewAttacher pv;
 
         public void setUri(Uri uri) {
             mUri = uri;
@@ -236,14 +238,17 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
         @Override
         public boolean onLongClick(View view) {
-            Intent intent = new Intent(mContext,PhotoCaptionEdit.class);
-            intent.setAction(Intent.ACTION_SEND);
-            intent.setType("image/jpeg");
-            intent.putExtra(Intent.EXTRA_STREAM, mUri);
-            Log.d(TAG,"Extra:" + mUri);
-            mContext.startActivity(intent);
-            mContext.finish();
-            return true;
+            // if (null != this.mCurrentFlingRunnable) {
+                Intent intent = new Intent(mContext,PhotoCaptionEdit.class);
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_STREAM, mUri);
+                Log.d(TAG,"Extra:" + mUri);
+                mContext.startActivity(intent);
+                mContext.finish();
+                return true;
+            // }
+            // return false;
         }
 
     }
@@ -273,9 +278,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             ExifTag tag = exifInterface.getTag(Integer.parseInt(tagId));
             if (tag == null)
                 continue;
-            if (tag.getComponentCount() < 8) {
-                continue;
-            }
 
             String desc = tag.getValueAsString();
             CharsetEncoder encoder =

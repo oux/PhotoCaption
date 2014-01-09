@@ -33,7 +33,32 @@
             android:icon="@drawable/photo_caption_a_"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
             android:parentActivityName="PhotoCaptionGallery"
+            android:launchMode="singleTask"
             android:taskAffinity="com.oux.photocaption.edit"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/jpeg" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/jpeg" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="PhotoCaptionGallery"
+                />
+        </activity>
+
+        <activity android:name="PhotoCaptionCapture"
+            android:label="@string/pc_capture"
+            android:icon="@drawable/photo_caption_a_"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
+            android:parentActivityName="PhotoCaptionGallery"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.oux.photocaption.capture"
             >
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -44,18 +69,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/jpeg" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.EDIT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/jpeg" />
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

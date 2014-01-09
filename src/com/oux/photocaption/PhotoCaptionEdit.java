@@ -103,8 +103,11 @@ public class PhotoCaptionEdit extends Activity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
+        Log.d(TAG,"intent:" + intent + " action:" + action + " type:" + type);
         imageView = (ImageView) findViewById(R.id.ImageView);
         descriptionView = (EditText)findViewById(R.id.Description);
+
+        // Dialogs
         saveDialog = new AlertDialog.Builder(
                 this).create();
 
@@ -125,12 +128,10 @@ public class PhotoCaptionEdit extends Activity
                     getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
                 if (mBackToShot)
                 {
-                    takePhoto();
+                    Intent intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
+                    startActivity(intent);
                 }
-                else
-                {
-                    finish();
-                }
+                finish();
             }
         });
 
@@ -160,15 +161,18 @@ public class PhotoCaptionEdit extends Activity
         mBackToShot=false;
         if (Intent.ACTION_EDIT.equals(action))
         {
+            Log.d(TAG,"Action: Edit");
             imageUri = intent.getData();
             handleImage();
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
+            Log.d(TAG,"Action: Send");
             if (type.startsWith("image/")) {
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 handleImage();
             }
         } else {
-            takePhoto();
+            Log.d(TAG,"Nothing todo");
+            finish();
         }
     }
 
@@ -178,7 +182,7 @@ public class PhotoCaptionEdit extends Activity
         if (imageView != null)
         {
             BitmapDrawable bd = (BitmapDrawable)imageView.getDrawable();
-            if (bd != null)
+            if (bd != null && bd.getBitmap() != null)
                 bd.getBitmap().recycle();
             imageView.setImageBitmap(null);
         }
@@ -197,7 +201,8 @@ public class PhotoCaptionEdit extends Activity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_capture:
-                takePhoto();
+                intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
+                startActivity(intent);
                 return true;
             case R.id.action_del:
                 deleteDialog.show();
@@ -215,13 +220,11 @@ public class PhotoCaptionEdit extends Activity
             case R.id.action_save:
                 setDescription(descriptionView.getText().toString());
                 if (mBackToShot)
-                {
-                    takePhoto();
-                }
+                    intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
                 else
-                {
-                    finish();
-                }
+                    intent = new Intent(getApplicationContext(),PhotoCaptionCapture.class);
+                startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -237,118 +240,14 @@ public class PhotoCaptionEdit extends Activity
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        // TODO: restore last edittext content
-        Log.i(TAG,"onResume");
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SHOT) {
-            if (resultCode == Activity.RESULT_OK) {
-                scanMedia(imageUri.getPath());
-                handleImage();
-            } else {
-                Intent intent = new Intent(this,PhotoCaptionGallery.class);
-                startActivity(intent);
-                finish();
-            }
-        }
         if (requestCode == SETTINGS) {
             String tagId = mSharedPrefs.getString("pref_edit_exif_field", Integer.toString(ExifInterface.TAG_USER_COMMENT));
             mTagId = Integer.parseInt(tagId);
             handleImage();
         }
     }
-
-    public void takePhoto() {
-        mBackToShot = true;
-        List<Intent> targetedIntents = new ArrayList<Intent>();
-        // Context context = getApplicationContext();
-        final PackageManager pm = getPackageManager();
-
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        File path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        Log.i(TAG,"path:" + path);
-        File photo = new File(path,  "CAP_"+ sdf.format(new Date()) +".jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
-        imageUri = Uri.fromFile(photo);
-
-        String packageName = mSharedPrefs.getString("pref_edit_camapp", "");
-
-        if (isPackageExisted(packageName)) {
-            intent.setPackage(packageName);
-            startActivityForResult(intent,SHOT);
-        } else {
-            List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            if (appInfoList.isEmpty()) {
-                Log.e(TAG,"No application found to take a shot");
-                Toast.makeText(this,
-                        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
-                finish();
-            }
-
-            ArrayList<Intent> extraIntents = new ArrayList<Intent>();
-
-            for (ResolveInfo ri : appInfoList) {
-                packageName = ri.activityInfo.packageName;
-                Log.i(TAG,"packageName:" + packageName);
-                if (!packageName.equals(this.getPackageName())) {
-                    Intent it = new Intent("android.media.action.IMAGE_CAPTURE");
-                    it.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-                    it.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photo));
-                    extraIntents.add(it);
-                }
-            }
-
-            if (extraIntents.isEmpty())
-            {
-                Log.e(TAG,"No application found to take a shot");
-                Toast.makeText(this,
-                        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1),
-                    getResources().getString(R.string.choose_cam));
-            Log.i(TAG,"Number of apps on choice:" + extraIntents.size());
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
-            startActivityForResult(chooserIntent,SHOT);
-        }
-    }
-
-    public boolean isPackageExisted(String targetPackage){
-        PackageManager pm=getPackageManager();
-        try {
-            PackageInfo info=pm.getPackageInfo(targetPackage,PackageManager.GET_META_DATA);
-        } catch (NameNotFoundException e) {
-            return false;
-        }  
-        return true;
-    }
-
-    private void scanMedia(String path) {
-        //TODO: try insertImage(... description)
-        File file = new File(path);
-        Uri uri = Uri.fromFile(file);
-        Intent scanFileIntent = new Intent(
-                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, imageUri);
-        sendBroadcast(scanFileIntent);
-    }
-
-    /*
-       public void sharePhoto() {
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND, Uri.parse("file:///sdcard/image.png"));
-        shareIntent.setType("image/png");
-        this.setResult(Activity.RESULT_OK, shareIntent);
-        this.finish();
-    }
-    */
 
     public String getRealPathFromURI(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -404,6 +303,7 @@ public class PhotoCaptionEdit extends Activity
             exifInterface.readExif(getContentResolver().openInputStream(imageUri));
         } catch (Exception e) {
             e.printStackTrace();
+            return "";
         }
         ExifTag tag = exifInterface.getTag(mTagId);
         if (tag != null)
@@ -450,10 +350,5 @@ public class PhotoCaptionEdit extends Activity
           Log.e(TAG, "forceRewriteExif");
           e.printStackTrace();
       }
-  }
-
-  @Override
-  protected void onStop() {
-      super.onStop();
   }
 }

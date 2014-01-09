@@ -196,7 +196,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_capture:
-                intent = new Intent(this,PhotoCaptionEdit.class);
+                intent = new Intent(this,PhotoCaptionCapture.class);
                 startActivity(intent);
                 finish();
                 return true;

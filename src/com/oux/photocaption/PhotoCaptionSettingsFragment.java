@@ -25,7 +25,7 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
 
     static final String TAG = "PhotoCaptionSettingsFragment";
     private static final String BUILD_VERSION = "build_version";
-    private static final String CAMAPP = "pref_edit_camapp";
+    private static final String CAMAPP = "pref_capture_camapp";
     private static final String EXIFGAL = "pref_gallery_exif_field";
     private static final String EXIFVIEW = "pref_view_exif_field";
     private static final String EXIFEDIT = "pref_edit_exif_field";
@@ -50,7 +50,6 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
         } catch (NameNotFoundException e) {
             findPreference(BUILD_VERSION).setTitle(R.string.app_name);
         }
-
     }
 
     public void setExifLists()
@@ -77,8 +76,8 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
          findPreference(EXIFGAL)).setEntryValues(values.toArray(new CharSequence[values.size()]));
         ((ListPreference)findPreference(EXIFEDIT)).setEntries(entries.toArray(new CharSequence[entries.size()]));
         ((ListPreference)findPreference(EXIFEDIT)).setEntryValues(values.toArray(new CharSequence[values.size()]));
-
     }
+
     public void setCamAppList()
     {
         Context context = getActivity().getApplicationContext();
