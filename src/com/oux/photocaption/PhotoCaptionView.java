@@ -9,22 +9,23 @@ import java.text.SimpleDateFormat;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.content.Intent;
-import android.net.Uri;
-import android.widget.Toast;
 import android.os.Environment;
+import android.util.Log;
+import android.net.Uri;
+import android.content.Intent;
 import android.content.ContentResolver;
 import android.content.SharedPreferences;
-import android.widget.Button;
 import android.view.Window;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.app.ActionBar;
+import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ShareActionProvider;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 
 import android.support.v4.view.ViewPager;
 
@@ -82,10 +83,12 @@ public class PhotoCaptionView extends Activity
                 Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
                 finish();
             }
-            if (imageUri.getScheme().equals("content"))
+            if (imageUri.getScheme().equals("content")
+                    && MediaStore.Images.Media.EXTERNAL_CONTENT_URI.compareTo(imageUri) < 0)
             {
-                Log.i(TAG,"VIEW: Uri:" + imageUri
-                        + " uri2:"
+                Log.i(TAG,"VIEW: Uri:" + imageUri);
+                Log.i(TAG,"VIEW: External:" + MediaStore.Images.Media.EXTERNAL_CONTENT_URI.compareTo(imageUri));
+                Log.i(TAG,"VIEW: uri2:"
                         + mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue()));
                 mPosition = mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue());
             } else if (imageUri.getScheme().equals("file"))
@@ -96,7 +99,8 @@ public class PhotoCaptionView extends Activity
                 mPosition = mPagerAdapter.getPosition(imageUri.getPath());
             } else {
                 Log.i(TAG,"To be implemented: Scheme:" + imageUri.getScheme() + ", Uri:" + imageUri);
-                Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
+                Toast.makeText(this,
+                        getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
                 finish();
             }
         }
