@@ -166,9 +166,9 @@ public class PhotoCaptionEdit extends Activity
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
-        if (Intent.ACTION_EDIT.equals(action))
+        if (Intent.ACTION_VIEW.equals(action) || Intent.ACTION_EDIT.equals(action))
         {
-            Log.d(TAG,"Action: Edit");
+            Log.d(TAG,"Action: "+ action);
             imageUri = intent.getData();
             handleImage();
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
