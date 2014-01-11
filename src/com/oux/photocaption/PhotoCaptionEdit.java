@@ -154,15 +154,28 @@ public class PhotoCaptionEdit extends Activity
             public void onClick(DialogInterface dialog, int which) {
             }
         });
-        deleteDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener cl = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getApplicationContext(),
-                    getResources().getString(R.string.deleted), Toast.LENGTH_SHORT).show();
-                getContentResolver().delete(imageUri,null,null);
+                        getResources().getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+                if (imageUri.getScheme().equals("file"))
+                {
+                    Uri uri = getContentUri(imageUri.getPath());
+                    if (uri == null)
+                        deleteFile(imageUri);
+                    else
+                        deleteContent(uri);
+                }
+                if (imageUri.getScheme().equals("content"))
+                {
+                    deleteContent(imageUri);
+                }
                 finish();
             }
-        });
+        };
+
+        deleteDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                getResources().getString(R.string.delete), cl );
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
@@ -181,6 +194,31 @@ public class PhotoCaptionEdit extends Activity
             Log.d(TAG,"Nothing todo");
             finish();
         }
+    }
+
+    private boolean deleteFile(Uri uri) {
+        File f = new File(uri.getPath());
+        try {
+            f.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean deleteContent(Uri uri) {
+        try {
+            getContentResolver().delete(uri,null,null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -274,6 +312,27 @@ public class PhotoCaptionEdit extends Activity
             mTagId = Integer.parseInt(tagId);
             handleImage();
         }
+    }
+
+    public Uri getContentUri(String filePath) {
+        String[] projection = {MediaStore.Images.Media._ID};
+        String selection = MediaStore.Images.ImageColumns.DATA + " LIKE ?";
+        String [] selectionArgs = {filePath};
+        Uri uri = null;
+        try {
+            Cursor cursor = this.getContentResolver().query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,projection,
+                    selection,selectionArgs,
+                    null);
+            cursor.moveToFirst();
+            int imageID = cursor.getInt( cursor.getColumnIndex(MediaStore.Images.Media._ID));
+            uri = Uri.withAppendedPath(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.toString(imageID));
+            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return uri;
     }
 
     public String getRealPathFromURI(Uri uri) {
