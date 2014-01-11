@@ -17,7 +17,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
-import android.widget.Toast;
 
 import com.android.gallery3d.exif.ExifInterface;
  
@@ -67,15 +66,21 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
         entries.add("ImageDescription");
 
         ((MultiSelectListPreference)
-         findPreference(EXIFVIEW)).setEntries(entries.toArray(new CharSequence[entries.size()]));
+         findPreference(EXIFVIEW)).setEntries(entries.toArray(new
+             CharSequence[entries.size()]));
         ((MultiSelectListPreference)
-         findPreference(EXIFVIEW)).setEntryValues(values.toArray(new CharSequence[values.size()]));
+         findPreference(EXIFVIEW)).setEntryValues(values.toArray(new
+             CharSequence[values.size()]));
         ((MultiSelectListPreference)
-         findPreference(EXIFGAL)).setEntries(entries.toArray(new CharSequence[entries.size()]));
+         findPreference(EXIFGAL)).setEntries(entries.toArray(new
+             CharSequence[entries.size()]));
         ((MultiSelectListPreference)
-         findPreference(EXIFGAL)).setEntryValues(values.toArray(new CharSequence[values.size()]));
-        ((ListPreference)findPreference(EXIFEDIT)).setEntries(entries.toArray(new CharSequence[entries.size()]));
-        ((ListPreference)findPreference(EXIFEDIT)).setEntryValues(values.toArray(new CharSequence[values.size()]));
+         findPreference(EXIFGAL)).setEntryValues(values.toArray(new
+             CharSequence[values.size()]));
+        ((ListPreference)findPreference(EXIFEDIT)).setEntries(entries.toArray(new
+            CharSequence[entries.size()]));
+        ((ListPreference)findPreference(EXIFEDIT)).setEntryValues(values.toArray(new
+            CharSequence[values.size()]));
     }
 
     public void setCamAppList()
@@ -97,17 +102,16 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
             }
         }
 
-        if (values.size() <= 1) {
-            // Add a none entry or hide preference
+        if (values.size() <= 2) {
             findPreference(CAMAPP).setEnabled(false);
             Log.e(TAG,"No application found to take a shot");
-            // Toast.makeText(context,
-            //        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
         }
         else
         {
-            ((ListPreference)findPreference(CAMAPP)).setEntries(values.toArray(new CharSequence[values.size()]));
-            ((ListPreference)findPreference(CAMAPP)).setEntryValues(values.toArray(new CharSequence[values.size()]));
+            ((ListPreference)findPreference(CAMAPP)).setEntries(values.toArray(new
+                CharSequence[values.size()]));
+            ((ListPreference)findPreference(CAMAPP)).setEntryValues(values.toArray(new
+                CharSequence[values.size()]));
         }
     }
 }

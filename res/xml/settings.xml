@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-        <CheckBoxPreference
-            android:key="pref_binary_info_signalisation"
-            android:title="@string/pref_binary_info_signalisation"
-            android:summary="@string/pref_binary_info_signalisation_sum"
-            android:defaultValue="false" 
-            />
-    <PreferenceCategory 
+    <PreferenceCategory
         android:title="@string/gallery"
         android:key="gallery">
         <CheckBoxPreference
             android:key="pref_gallery_whole_caption"
             android:title="@string/pref_gallery_whole_caption"
             android:summary="@string/pref_gallery_whole_caption_summ"
-            android:defaultValue="false" 
-            />
-        <MultiSelectListPreference
-            android:key="pref_gallery_exif_field"
-            android:title="@string/pref_exif_field"
-            android:summary="@string/pref_gallery_exif_field_summ"
+            android:defaultValue="false"
             />
     </PreferenceCategory>
     <PreferenceCategory
@@ -28,21 +17,7 @@
             android:key="pref_view_action_bar"
             android:title="@string/pref_view_action_bar"
             android:summary="@string/pref_view_action_bar_summ"
-            android:defaultValue="false" 
-            />
-        <MultiSelectListPreference
-            android:key="pref_view_exif_field"
-            android:title="@string/pref_exif_field"
-            android:summary="@string/pref_view_exif_field_summ"
-            />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:title="@string/edit"
-        android:key="edit">
-        <ListPreference
-            android:key="pref_edit_exif_field"
-            android:title="@string/pref_exif_field"
-            android:summary="@string/pref_edit_exif_field_summ"
+            android:defaultValue="false"
             />
     </PreferenceCategory>
     <PreferenceCategory
@@ -53,7 +28,42 @@
             android:title="@string/pref_capture_camapp"
             android:summary="@string/pref_capture_camapp_summ"
             />
+        <ListPreference
+            android:key="pref_capture_directory"
+            android:title="@string/pref_capture_directory"
+            android:summary="@string/pref_capture_directory_summ"
+            />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/general"
+        android:key="general">
+        <CheckBoxPreference
+            android:key="pref_binary_info_signalisation"
+            android:title="@string/pref_binary_info_signalisation"
+            android:summary="@string/pref_binary_info_signalisation_sum"
+            android:defaultValue="false"
+            />
+        <PreferenceScreen
+            android:key="exif_preferencescreen"
+            android:title="@string/pref_exif">
+            <MultiSelectListPreference
+                android:key="pref_view_exif_field"
+                android:title="@string/pref_view_exif_field"
+                android:summary="@string/pref_view_exif_field_summ"
+                />
+            <MultiSelectListPreference
+                android:key="pref_gallery_exif_field"
+                android:title="@string/pref_gallery_exif_field"
+                android:summary="@string/pref_gallery_exif_field_summ"
+                />
+            <ListPreference
+                android:key="pref_edit_exif_field"
+                android:title="@string/pref_edit_exif_field"
+                android:summary="@string/pref_edit_exif_field_summ"
+                />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:title="@string/about">
         <Preference
