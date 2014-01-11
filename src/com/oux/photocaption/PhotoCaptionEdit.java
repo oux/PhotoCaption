@@ -66,7 +66,6 @@ public class PhotoCaptionEdit extends Activity
     private static int SETTINGS = 101;
     EditText descriptionView;
     ImageView imageView;
-    File mFile;
     ActionBar actionBar;
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
     AlertDialog saveDialog;

@@ -2,9 +2,11 @@ package com.oux.photocaption;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.io.File;
  
 import android.util.Log;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.preference.PreferenceFragment;
 import android.preference.ListPreference;
@@ -25,6 +27,7 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
     static final String TAG = "PhotoCaptionSettingsFragment";
     private static final String BUILD_VERSION = "build_version";
     private static final String CAMAPP = "pref_capture_camapp";
+    private static final String DIRECTORY = "pref_capture_directory";
     private static final String EXIFGAL = "pref_gallery_exif_field";
     private static final String EXIFVIEW = "pref_view_exif_field";
     private static final String EXIFEDIT = "pref_edit_exif_field";
@@ -38,6 +41,7 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
         setPackageVersion();
         setCamAppList();
         setExifLists();
+        setDirectoryList();
     }
 
     public void setPackageVersion()
@@ -104,7 +108,7 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
 
         if (values.size() <= 2) {
             findPreference(CAMAPP).setEnabled(false);
-            Log.e(TAG,"No application found to take a shot");
+            Log.e(TAG,"No more than one application found to take a shot");
         }
         else
         {
@@ -113,5 +117,29 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
             ((ListPreference)findPreference(CAMAPP)).setEntryValues(values.toArray(new
                 CharSequence[values.size()]));
         }
+    }
+
+    public void setDirectoryList()
+    {
+        ArrayList<String> roots = new ArrayList<String>();
+        ArrayList<CharSequence> values = new ArrayList<CharSequence>();
+
+        roots.add(Environment.DIRECTORY_PICTURES);
+        roots.add(Environment.DIRECTORY_DCIM);
+        for (String d:roots)
+        {
+            if (Environment.getExternalStoragePublicDirectory(d).isDirectory()) {
+                values.add(d);
+                Log.i(TAG,"Scanning:" + d );
+                for (File f: Environment.getExternalStoragePublicDirectory(d).listFiles())
+                    if (f.isDirectory())
+                        values.add(d + "/" + f.getName());
+            }
+        }
+
+        ((ListPreference)findPreference(DIRECTORY)).setEntries(values.toArray(new
+            CharSequence[values.size()]));
+        ((ListPreference)findPreference(DIRECTORY)).setEntryValues(values.toArray(new
+            CharSequence[values.size()]));
     }
 }

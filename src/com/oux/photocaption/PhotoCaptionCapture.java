@@ -3,9 +3,9 @@ package com.oux.photocaption;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.File;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.Charset;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -119,7 +119,8 @@ public class PhotoCaptionCapture extends Activity
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         File path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+                mSharedPrefs.getString("pref_capture_directory", Environment.DIRECTORY_PICTURES)
+                );
         Log.i(TAG,"path:" + path);
         File photo = new File(path,  "CAP_"+ sdf.format(new Date()) +".jpg");
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
