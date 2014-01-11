@@ -60,7 +60,6 @@ import android.preference.PreferenceManager;
 public class PhotoCaptionEdit extends Activity
 {
     static final String TAG = "PhotoCaptionEdit";
-    private static final String CAMAPP = "pref_edit_camapp";
     private Uri imageUri;
     private String mInitialDescription;
     private static int SHOT = 100;
@@ -77,6 +76,7 @@ public class PhotoCaptionEdit extends Activity
     Point mSize;
     SharedPreferences mSharedPrefs;
     int mTagId;
+    boolean mCanBeReferenced;
 
     /** Called when the activity is first created. */
     @Override
@@ -183,6 +183,7 @@ public class PhotoCaptionEdit extends Activity
         {
             Log.d(TAG,"Action: "+ action);
             imageUri = intent.getData();
+            checkMediaStore(imageUri);
             handleImage();
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             Log.d(TAG,"Action: Send");
@@ -193,6 +194,20 @@ public class PhotoCaptionEdit extends Activity
         } else {
             Log.d(TAG,"Nothing todo");
             finish();
+        }
+    }
+
+    private void checkMediaStore(Uri uri) {
+        if (uri.getScheme().equals("file"))
+        {
+            // TODO: Check if the file exists on MediaStore and Propose to add it if not
+            Uri u = getContentUri(uri.getPath());
+            mCanBeReferenced = u == null;
+            if (mCanBeReferenced)
+            {
+                Toast.makeText(this,
+                        getResources().getString(R.string.referencing_available), Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -238,6 +253,11 @@ public class PhotoCaptionEdit extends Activity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_actions, menu);
+        if (!mCanBeReferenced)
+        {
+            MenuItem item = menu.findItem(R.id.action_reference);
+            item.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -258,9 +278,15 @@ public class PhotoCaptionEdit extends Activity
                     saveDialog.show();
                 }
                 return true;
+
             case R.id.action_del:
                 deleteDialog.show();
                 return true;
+
+            case R.id.action_reference:
+                scanMedia(imageUri.getPath());
+                return true;
+
             case R.id.action_cancel:
                 if (mInitialDescription.equals(descriptionView.getText().toString()))
                 {
@@ -312,6 +338,16 @@ public class PhotoCaptionEdit extends Activity
             mTagId = Integer.parseInt(tagId);
             handleImage();
         }
+    }
+
+    private void scanMedia(String path) {
+        //TODO: try insertImage(... description)
+        File file = new File(path);
+        Uri uri = Uri.fromFile(file);
+        Intent scanFileIntent = new Intent(
+                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, imageUri);
+        sendBroadcast(scanFileIntent);
+        Toast.makeText(this,getResources().getString(R.string.referencing_performed), Toast.LENGTH_LONG).show();
     }
 
     public Uri getContentUri(String filePath) {

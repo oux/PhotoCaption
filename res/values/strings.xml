@@ -22,6 +22,7 @@
     <string name="capture">Capture</string>
     <string name="search">Search</string>
     <string name="share">Share</string>
+    <string name="referencing">Make available in gallery</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="poweredby">Powered by</string>
@@ -41,6 +42,8 @@
     <string name="choose_each_time">Choose each time</string>
     <string name="tagnotsaved">Failed to save the comment</string>
     <string name="shared_via_photocaption">Shared via PhotoCaption</string>
+    <string name="referencing_performed">Photo Caption asked to reference this photo in your medias</string>
+    <string name="referencing_available">Reference this image as android media via the menu</string>
 
     <string name="pref_binary_info_signalisation">Hide &lt;BINARY DATA&gt; info</string>
     <string name="pref_binary_info_signalisation_sum">Some binary datas can be hidden in the photo by some device constructors by using the same field that PhotoCaption. To inform user of existence of this binary datas PhotoCaption shows &lt;BINARY DATA&gt;</string>

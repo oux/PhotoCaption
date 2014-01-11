@@ -19,6 +19,12 @@
         android:showAsAction="always"
         />
     <item
+        android:id="@+id/action_reference"
+        android:title="@string/referencing"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom|withText"
+        />
+    <item
         android:id="@+id/action_del"
         android:title="@string/delete"
         android:icon="@android:drawable/ic_menu_delete"
