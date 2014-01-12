@@ -209,6 +209,9 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
                 intent = new Intent(this,PhotoCaptionSettings.class);
                 startActivity(intent);
                 return true;
+            case android.R.id.home:
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
