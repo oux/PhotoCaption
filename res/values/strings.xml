@@ -47,15 +47,15 @@
     <string name="referencing_available">Reference this image as android media via the menu</string>
 
     <string name="pref_binary_info_signalisation">Hide &lt;BINARY DATA&gt; info</string>
-    <string name="pref_binary_info_signalisation_sum">Some binary datas can be hidden in the photo by some device constructors by using the same field that PhotoCaption. To inform user of existence of this binary datas PhotoCaption shows &lt;BINARY DATA&gt;</string>
+    <string name="pref_binary_info_signalisation_sum">Binary data is stored in the photo by some manufacturers constructors using the same field that PhotoCaption. To inform of existence of these data PhotoCaption shows &lt;BINARY DATA&gt;</string>
     <string name="pref_view_action_bar">Display action bar</string>
-    <string name="pref_view_action_bar_summ">Display action bar when opening view mode</string>
+    <string name="pref_view_action_bar_summ">Display action bar on View Mode</string>
     <string name="pref_capture_camapp">Select camera application</string>
     <string name="pref_capture_camapp_summ">Choose the application to take shots</string>
     <string name="pref_capture_directory">Select Directory</string>
-    <string name="pref_capture_directory_summ">Choose the directory you want to store your shots</string>
-    <string name="pref_gallery_whole_caption">Entire captions</string>
-    <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>
+    <string name="pref_capture_directory_summ">Choose the directory to store your pictures</string>
+    <string name="pref_gallery_whole_caption">Full captions</string>
+    <string name="pref_gallery_whole_caption_summ">Fully display captions on gallery</string>
     <string name="pref_photocaption_sum">By Sébastien MICHEL</string>
     <string name="pref_photoview">PhotoView</string>
     <string name="pref_photoview_sum">By Chris Banes</string>

@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Photo Caption</string>
-    
+
     <string name="mode_edit">Edit Mode</string>
     <string name="mode_view">View Mode</string>
     <string name="mode_gallery">Gallery Mode</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit</string>
 
-    <string name="pc_edit">Photo Caption Edit</string>
-    <string name="pc_gallery">Photo Caption Gallery</string>
-    <string name="pc_view">Photo Caption View</string>
-    <string name="pc_settings">Photo Caption Settings</string>
-    
+    <string name="pc_capture">Capture Photo Caption</string>
+    <string name="pc_edit">Edit Photo Caption</string>
+    <string name="pc_gallery">Gallery Photo Caption</string>
+    <string name="pc_view">View Photo Caption</string>
+    <string name="pc_settings">Settings Photo Caption</string>
+
+    <string name="view">View</string>
     <string name="edit">Edit</string>
+    <string name="capture">Capture</string>
+    <string name="general">General</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="save">Save</string>
-    <string name="capture">Capture</string>
+    <string name="search">Search</string>
+    <string name="share">Share</string>
+    <string name="referencing">Make available in gallery</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="poweredby">Powered by</string>
@@ -36,9 +42,18 @@
     <string name="not_able_to_perform">Photo Caption is not able to perform this action</string>
     <string name="choose_each_time">Choose each time</string>
     <string name="tagnotsaved">Failed to save the comment</string>
+    <string name="shared_via_photocaption">Shared via PhotoCaption</string>
+    <string name="referencing_performed">Photo Caption asked to reference this photo in your medias</string>
+    <string name="referencing_available">Reference this image as android media via the menu</string>
 
+    <string name="pref_binary_info_signalisation">Hide &lt;BINARY DATA&gt; info</string>
+    <string name="pref_binary_info_signalisation_sum">Binary data is stored in the photo by some manufacturers constructors using the same field that PhotoCaption. To inform of existence of these data PhotoCaption shows &lt;BINARY DATA&gt;</string>
+    <string name="pref_view_action_bar">Display action bar</string>
+    <string name="pref_view_action_bar_summ">Display action bar on View Mode</string>
     <string name="pref_capture_camapp">Select camera application</string>
     <string name="pref_capture_camapp_summ">Choose the application to take shots</string>
+    <string name="pref_capture_directory">Select Directory</string>
+    <string name="pref_capture_directory_summ">Choose the directory to store your pictures</string>
     <string name="pref_gallery_whole_caption">Entire captions</string>
     <string name="pref_gallery_whole_caption_summ">Display entire captions on gallery</string>
     <string name="pref_photocaption_sum">By Sébastien MICHEL</string>
@@ -46,4 +61,12 @@
     <string name="pref_photoview_sum">By Chris Banes</string>
     <string name="pref_staggeredgridview">StaggeredGridView</string>
     <string name="pref_staggeredgridview_sum">By Maurycy Wojtowicz</string>
+
+    <string name="pref_exif">Exif Fields</string>
+    <string name="pref_gallery_exif_field">Fields displayed on Gallery Mode</string>
+    <string name="pref_view_exif_field">Fields displayed on View Mode</string>
+    <string name="pref_edit_exif_field">Field to edit</string>
+    <string name="pref_gallery_exif_field_summ">Select Exif fields you want to see on gallery</string>
+    <string name="pref_view_exif_field_summ">Select Exif fields you want to see on Viewer</string>
+    <string name="pref_edit_exif_field_summ">Select the Exif field you want to edit</string>
 </resources>

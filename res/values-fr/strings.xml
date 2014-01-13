@@ -8,16 +8,22 @@
     <string name="gallery">Galerie</string>
     <string name="edit">Edition</string>
 
-    <string name="pc_edit">Photo Legende Edition</string>
-    <string name="pc_gallery">Photo Legende Galerie</string>
-    <string name="pc_view">Photo Legende Visualisation</string>
-    <string name="pc_settings">Photo Legende Parametrage</string>
+    <string name="pc_capture">Capture Photo Legende</string>
+    <string name="pc_edit">Edition Photo Legende</string>
+    <string name="pc_gallery">Galerie Photo Legende</string>
+    <string name="pc_view">Visualisation Photo Legende</string>
+    <string name="pc_settings">Parametrage Photo Legende</string>
     
+    <string name="view">Visualisation</string>
     <string name="edit">Editer</string>
+    <string name="capture">Capture</string>
+    <string name="general">Général</string>
     <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
     <string name="save">Sauver</string>
-    <string name="capture">Capturer</string>
+    <string name="search">Recherche</string>
+    <string name="share">Partage</string>
+    <string name="referencing">Rendre disponible dans la galerie</string>
     <string name="settings">Parametrage</string>
     <string name="about">A Propos</string>
     <string name="poweredby">Fonctionne grace à</string>
@@ -36,14 +42,31 @@
     <string name="not_able_to_perform">Photo Caption n\'est pas en mesure d\'effectuer cette action</string>
     <string name="choose_each_time">Choisir à chaque fois</string>
     <string name="tagnotsaved">Impossible de sauver le commentaire</string>
+    <string name="shared_via_photocaption">Partagé via Photo Légende</string>
+    <string name="referencing_performed">Photo Légende à effectué la demande de referencement de la photo dans vos médias</string>
+    <string name="referencing_available">Référencez cette image comme média Android via le menu</string>
 
-    <string name="pref_capture_camapp">Selectionnez l\'application camera</string>
-    <string name="pref_capture_camapp_summ">Selectionnez l\'application pour prendre les photos</string>
+    <string name="pref_binary_info_signalisation">Cacher l\'information &lt;BINARY DATA&gt;</string>
+    <string name="pref_binary_info_signalisation_sum">Des données binaires sont stockées dans la photo par certains constructeurs en utilisant le même champ que Photo Légende. Pour informer de l\'existence de ces données, Photo Légende montre l\'information &lt;BINARY DATA&gt;</string>
+    <string name="pref_view_action_bar">Afficher la barre d\'action</string>
+    <string name="pref_view_action_bar_summ">Afficher la barre d\'action par défaut dans le Mode Visualisation</string>
+    <string name="pref_capture_camapp">Sélection de l\'application camera</string>
+    <string name="pref_capture_camapp_summ">Choisir l\'application pour prendre la photo</string>
+    <string name="pref_capture_directory">Sélection de répertoire</string>
+    <string name="pref_capture_directory_summ">Choisir le répertoire de stockage de vos photos</string>
     <string name="pref_gallery_whole_caption">Commentaires complets</string>
-    <string name="pref_gallery_whole_caption_summ">Afficher entierement les commentaires dans la galerie</string>
+    <string name="pref_gallery_whole_caption_summ">Afficher entièrement les commentaires dans la galerie</string>
     <string name="pref_photocaption_sum">Par Sébastien MICHEL</string>
     <string name="pref_photoview">PhotoView</string>
     <string name="pref_photoview_sum">Par Chris Banes</string>
     <string name="pref_staggeredgridview">StaggeredGridView</string>
     <string name="pref_staggeredgridview_sum">Par Maurycy Wojtowicz</string>
+
+    <string name="pref_exif">Champs Exif</string>
+    <string name="pref_gallery_exif_field">Champs affichés dans le Mode Galerie</string>
+    <string name="pref_view_exif_field">Champs affichés dans le Mode Visualisation</string>
+    <string name="pref_edit_exif_field">Champ à éditer</string>
+    <string name="pref_gallery_exif_field_summ">Selection des champs Exif que vous souhaitez voir dans la Galerie</string>
+    <string name="pref_view_exif_field_summ">Selection des champs Exif que vous souhaitez voir dans le mode Visualisation</string>
+    <string name="pref_edit_exif_field_summ">Selection du champ Exif que vous souhaitez éditer</string>
 </resources>
