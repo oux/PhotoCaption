@@ -50,11 +50,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.Matrix;
 import android.content.SharedPreferences;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.IfdId;
+import com.android.gallery3d.data.Exif;
 import android.preference.PreferenceManager;
 
 public class PhotoCaptionEdit extends Activity
@@ -385,6 +387,7 @@ public class PhotoCaptionEdit extends Activity
             Bitmap preview_bitmap = null;
             try {
                 String image;
+                int orientation = getExifOrientation();
                 if (imageUri.getScheme().equals("content"))
                     image = getRealPathFromURI(imageUri);
                 else
@@ -407,13 +410,39 @@ public class PhotoCaptionEdit extends Activity
                 }
                 options.inJustDecodeBounds=false;
                 preview_bitmap=BitmapFactory.decodeFile(image,options);
+                if (preview_bitmap == null)
+                {
+                    Toast.makeText(this,
+                            getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                if (orientation > 1) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(orientation);
+
+                    preview_bitmap = Bitmap.createBitmap(preview_bitmap, 0, 0, preview_bitmap.getWidth(),
+                            preview_bitmap.getHeight(), matrix, true);
+                }
                 imageView.setImageBitmap(preview_bitmap);
                 mInitialDescription = getDescription();
                 descriptionView.setText(mInitialDescription);
             } catch (Exception e) {
                 e.printStackTrace();
+                Toast.makeText(this,
+                        getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
+                finish();
             }
 
+        }
+    }
+
+    int getExifOrientation()
+    {
+        try {
+        return Exif.getOrientation(getContentResolver().openInputStream(imageUri));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 
