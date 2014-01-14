@@ -65,6 +65,7 @@ public class PhotoCaptionCapture extends Activity
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
     SharedPreferences mSharedPrefs;
     private boolean mBackToShot = true;
+    ArrayList<String> camApps = new ArrayList<String>();
 
     /** Called when the activity is first created. */
     @Override
@@ -114,8 +115,55 @@ public class PhotoCaptionCapture extends Activity
     public void takePhoto() {
         List<Intent> targetedIntents = new ArrayList<Intent>();
         // Context context = getApplicationContext();
-        final PackageManager pm = getPackageManager();
 
+        final String prefPackageName = mSharedPrefs.getString("pref_capture_camapp", "");
+
+        if (isPackageExisted(prefPackageName)) {
+            askShot(prefPackageName);
+        } else {
+            final PackageManager pm = getPackageManager();
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (appInfoList.isEmpty())
+                noCamAppFound();
+
+            for (ResolveInfo ri : appInfoList) {
+                String packageName = ri.activityInfo.packageName;
+                Log.i(TAG,"packageName:" + packageName);
+                if (!packageName.equals(this.getPackageName())) {
+                    camApps.add(packageName);
+                }
+            }
+
+            if (camApps.isEmpty())
+                noCamAppFound();
+            else if (camApps.size() == 1)
+            {
+                String packageName = camApps.get(0);
+                askShot(packageName);
+            }
+            else
+            {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.pref_capture_camapp_summ);
+                builder.setItems(
+                        camApps.toArray(new CharSequence[] {}),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String packageName = camApps.get(which);
+                                if (!prefPackageName.equals(getResources().getString(R.string.choose_each_time)))
+                    setPreferenceCamApp(packageName);
+                askShot(packageName);
+                            }
+                        });
+                builder.create().show();
+            }
+        }
+    }
+
+    public void askShot(String packageName)
+    {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         File path = Environment.getExternalStoragePublicDirectory(
@@ -127,47 +175,23 @@ public class PhotoCaptionCapture extends Activity
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
 
-        String packageName = mSharedPrefs.getString("pref_capture_camapp", "");
+        intent.setPackage(packageName);
+        startActivityForResult(intent,SHOT);
+    }
 
-        if (isPackageExisted(packageName)) {
-            intent.setPackage(packageName);
-            startActivityForResult(intent,SHOT);
-        } else {
-            List<ResolveInfo> appInfoList = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            if (appInfoList.isEmpty()) {
-                Log.e(TAG,"No application found to take a shot");
-                Toast.makeText(this,
-                        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
-                finish();
-            }
+    public void noCamAppFound()
+    {
+        Log.e(TAG,"No application found to take a shot");
+        Toast.makeText(this,
+                getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
-            ArrayList<Intent> extraIntents = new ArrayList<Intent>();
-
-            for (ResolveInfo ri : appInfoList) {
-                packageName = ri.activityInfo.packageName;
-                Log.i(TAG,"packageName:" + packageName);
-                if (!packageName.equals(this.getPackageName())) {
-                    Intent it = new Intent("android.media.action.IMAGE_CAPTURE");
-                    it.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-                    it.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photo));
-                    extraIntents.add(it);
-                }
-            }
-
-            if (extraIntents.isEmpty())
-            {
-                Log.e(TAG,"No application found to take a shot");
-                Toast.makeText(this,
-                        getResources().getString(R.string.noapptoshot), Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            Intent chooserIntent = Intent.createChooser( extraIntents.remove(extraIntents.size() -1),
-                    getResources().getString(R.string.choose_cam));
-            Log.i(TAG,"Number of apps on choice:" + extraIntents.size());
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[] {}));
-            startActivityForResult(chooserIntent,SHOT);
-        }
+    public void setPreferenceCamApp(String camApp)
+    {
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        editor.putString("pref_capture_camapp", camApp);
+        editor.commit();
     }
 
     public boolean isPackageExisted(String targetPackage){
@@ -176,7 +200,7 @@ public class PhotoCaptionCapture extends Activity
             PackageInfo info=pm.getPackageInfo(targetPackage,PackageManager.GET_META_DATA);
         } catch (NameNotFoundException e) {
             return false;
-        }  
+        }
         return true;
     }
 
