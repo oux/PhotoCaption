@@ -54,7 +54,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
     static final String TAG = "photoCaptionPagerAdapter";
     private Uri mImageUriForced;
     Point mSize;
-    private PhotoViewAttacher mAttacher;
     SharedPreferences mSharedPrefs;
 
     public void setContext(PhotoCaptionView context) {
@@ -224,13 +223,12 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             }
             if (DEBUG)
                 Log.d(TAG,"photoView: " + photoView);
-            mAttacher = new PhotoViewAttacher(photoView);
-            PhotoEditListener photoEditListener = new PhotoEditListener(mAttacher);
+            PhotoViewAttacher pvAttacher = photoView.getPhotoViewAttacher();
+            PhotoEditListener photoEditListener = new PhotoEditListener(pvAttacher);
             photoEditListener.setUri(imageUri);
-            // photoEditListener.setParent(mAttacher);
-            mAttacher.setOnLongClickListener(photoEditListener);
-            mAttacher.setOnDoubleTapListener(photoEditListener);
-            mAttacher.setOnPhotoTapListener(new PhotoTapListener());
+            photoView.setOnLongClickListener(photoEditListener);
+            pvAttacher.setOnDoubleTapListener(photoEditListener);
+            photoView.setOnPhotoTapListener(new PhotoTapListener());
 
             // Now just add PhotoView to ViewPager and return it
             container.addView(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
