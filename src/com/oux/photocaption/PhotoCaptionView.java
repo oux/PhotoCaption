@@ -31,6 +31,7 @@ import android.support.v4.view.ViewPager;
 
 public class PhotoCaptionView extends Activity
 {
+    private static final boolean DEBUG = false;
     static final String TAG = "photoCaptionView";
     private static int SETTINGS = 101;
     private Uri imageUri;
@@ -47,7 +48,8 @@ public class PhotoCaptionView extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_pager);
 
-        Log.i(TAG,"onCreate");
+        if (DEBUG)
+            Log.d(TAG,"onCreate");
 
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -74,10 +76,12 @@ public class PhotoCaptionView extends Activity
         if (mPosition == -1)
         {
             if (Intent.ACTION_VIEW.equals(action)) {
-                Log.i(TAG,"Action View:" + intent.getData());
+                if (DEBUG)
+                    Log.d(TAG,"Action View:" + intent.getData());
                 imageUri = intent.getData();
             } else if (Intent.ACTION_SEND.equals(action) && type != null) {
-                Log.i(TAG,"Action Send:" + intent.getData());
+                if (DEBUG)
+                    Log.d(TAG,"Action Send:" + intent.getData());
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             } else {
                 Toast.makeText(this,getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
@@ -86,19 +90,24 @@ public class PhotoCaptionView extends Activity
             if (imageUri.getScheme().equals("content")
                     && MediaStore.Images.Media.EXTERNAL_CONTENT_URI.compareTo(imageUri) < 0)
             {
-                Log.i(TAG,"VIEW: Uri:" + imageUri);
-                Log.i(TAG,"VIEW: External:" + MediaStore.Images.Media.EXTERNAL_CONTENT_URI.compareTo(imageUri));
-                Log.i(TAG,"VIEW: uri2:"
-                        + mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue()));
+                if (DEBUG)
+                {
+                    Log.d(TAG,"VIEW: Uri:" + imageUri);
+                    Log.d(TAG,"VIEW: External:" + MediaStore.Images.Media.EXTERNAL_CONTENT_URI.compareTo(imageUri));
+                    Log.d(TAG,"VIEW: uri2:"
+                            + mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue()));
+                }
                 mPosition = mPagerAdapter.getPosition(Long.valueOf(imageUri.getLastPathSegment()).longValue());
             } else if (imageUri.getScheme().equals("file"))
             {
-                Log.i(TAG,"VIEW: Uri:" + imageUri
-                        + " uri2:"
-                        + mPagerAdapter.getPosition(imageUri.getPath()));
+                if (DEBUG)
+                    Log.d(TAG,"VIEW: Uri:" + imageUri
+                            + " uri2:"
+                            + mPagerAdapter.getPosition(imageUri.getPath()));
                 mPosition = mPagerAdapter.getPosition(imageUri.getPath());
             } else {
-                Log.i(TAG,"To be implemented: Scheme:" + imageUri.getScheme() + ", Uri:" + imageUri);
+                if (DEBUG)
+                    Log.d(TAG,"To be implemented: Scheme:" + imageUri.getScheme() + ", Uri:" + imageUri);
                 Toast.makeText(this,
                         getResources().getString(R.string.not_able_to_perform), Toast.LENGTH_LONG).show();
                 finish();
@@ -108,7 +117,8 @@ public class PhotoCaptionView extends Activity
         if (mPosition == -1) {
             mPagerAdapter.forceUri(imageUri);
         }
-        Log.i(TAG,"new position: " + mPosition);
+        if (DEBUG)
+            Log.d(TAG,"new position: " + mPosition);
         mViewPager.setCurrentItem(mPosition,false);
 
     }
@@ -172,7 +182,8 @@ public class PhotoCaptionView extends Activity
                 return true;
             case R.id.action_edit:
                 intent = new Intent(getApplicationContext(),PhotoCaptionEdit.class);
-                Log.i(TAG,"Current:" + mViewPager.getCurrentItem());
+                if (DEBUG)
+                    Log.d(TAG,"Current:" + mViewPager.getCurrentItem());
                 intent.setAction(Intent.ACTION_SEND);
                 if (mPosition == -1)
                 {

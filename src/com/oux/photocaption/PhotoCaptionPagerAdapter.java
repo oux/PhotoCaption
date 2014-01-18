@@ -45,6 +45,7 @@ import static android.view.MotionEvent.ACTION_UP;
 
 class PhotoCaptionPagerAdapter extends PagerAdapter {
 
+    private static final boolean DEBUG = false;
     private PhotoCaptionView mContext;
     private int layoutResourceId;
     private Cursor externalCursor;
@@ -119,7 +120,8 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         try {
             long Id = cursor.getLong(columnIndex);
 
-            Log.d(TAG,"Photo ID is " + Id);
+            if (DEBUG)
+                Log.d(TAG,"Photo ID is " + Id);
             cursor.close();
             return getPosition(Id);
         } catch (Exception e) {
@@ -137,8 +139,9 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
     @Override
     public View instantiateItem(ViewGroup container, int position) {
-        Log.i(TAG,"VIEW:" + position + ", container:" + container
-                + ", context:" + container.getContext() + ", mContext:" + mContext);
+        if (DEBUG)
+            Log.i(TAG,"VIEW:" + position + ", container:" + container
+                    + ", context:" + container.getContext() + ", mContext:" + mContext);
         LayoutInflater inflater = (LayoutInflater) container.getContext()
             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -153,21 +156,24 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         {
             externalCursor.moveToPosition(position);
             int imageID = externalCursor.getInt( externalColumnIndex );
-            Log.d(TAG,"Id:" + imageID);
+            if (DEBUG)
+                Log.d(TAG,"Id:" + imageID);
             imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,Integer.toString(imageID));
         }
         else
         {
             imageUri = mImageUriForced;
         }
-        Log.d(TAG,"imageUri:" + imageUri);
+        if (DEBUG)
+            Log.d(TAG,"imageUri:" + imageUri);
 
         String description = getDescription(imageUri);
         try {
             String image;
             if (imageUri.getScheme().equals("content"))
             {
-                Log.i(TAG,"Content");
+                if (DEBUG)
+                    Log.d(TAG,"Content");
                 image = getRealPathFromURI(imageUri);
             }
             else
@@ -206,15 +212,18 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             photoView.setImageBitmap(preview_bitmap);
             if (description != "" && description != null && description.length() != 0)
             {
-                Log.i(TAG,"setText: <"+description + ">("+description.length()+")");
+                if (DEBUG)
+                    Log.d(TAG,"setText: <"+description + ">("+description.length()+")");
                 descriptionView.setText(description);
             }
             else
             {
-                Log.i(TAG,"Hidding");
+                if (DEBUG)
+                    Log.d(TAG,"Hidding");
                 descriptionView.setVisibility(View.INVISIBLE);
             }
-            Log.i(TAG,"photoView: " + photoView);
+            if (DEBUG)
+                Log.d(TAG,"photoView: " + photoView);
             mAttacher = new PhotoViewAttacher(photoView);
             PhotoEditListener photoEditListener = new PhotoEditListener(mAttacher);
             photoEditListener.setUri(imageUri);
@@ -246,7 +255,8 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
 
         public void setUri(Uri uri) {
             mUri = uri;
-            Log.d(TAG,"mUri:" + mUri);
+            if (DEBUG)
+                Log.d(TAG,"mUri:" + mUri);
         }
 
         @Override
@@ -274,7 +284,8 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("image/jpeg");
             intent.putExtra(Intent.EXTRA_STREAM, mUri);
-            Log.d(TAG,"Extra:" + mUri);
+            if (DEBUG)
+                Log.d(TAG,"Extra:" + mUri);
             mContext.startActivity(intent);
             mContext.finish();
             return true;
@@ -288,7 +299,6 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             mContext.toggleActionBar();
         }
     }
-
 
     public String getDescription(Uri imageUri)
     {

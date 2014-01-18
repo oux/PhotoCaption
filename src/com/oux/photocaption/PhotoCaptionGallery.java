@@ -46,6 +46,7 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
        StaggeredGridView.OnItemClickListener,
        StaggeredGridView.OnItemLongClickListener {
     static final String TAG = "photoCaptionGallery";
+    private static final boolean DEBUG = false;
     private StaggeredGridView sGridView;
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
@@ -56,7 +57,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO: try to navigate by album (NavigationList).
-        Log.i(TAG,"onCreate");
+        if (DEBUG)
+            Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
 
         actionBar = getActionBar();
@@ -116,7 +118,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     public void onPause() {
-        Log.i(TAG,"onPause");
+        if (DEBUG)
+            Log.i(TAG,"onPause");
         if (mEntireCaption)
             gridState = sGridView.onSaveInstanceState();
         super.onPause();
@@ -124,7 +127,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     public void onResume() {
-        Log.i(TAG,"onResume");
+        if (DEBUG)
+            Log.i(TAG,"onResume");
         setGridView();
         customGridAdapter.notifyDataSetChanged();
         if (mEntireCaption)
@@ -134,7 +138,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-        Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
+        if (DEBUG)
+            Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
         Intent intent = new Intent(this,PhotoCaptionView.class);
         intent.putExtra("position",position);
         startActivity(intent);
@@ -142,7 +147,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-        Log.i(TAG, "onItemLongClick:" + v + " pos=" + position + " id=" + id);
+        if (DEBUG)
+            Log.i(TAG, "onItemLongClick:" + v + " pos=" + position + " id=" + id);
         Intent intent = new Intent(Intent.ACTION_EDIT,
                 customGridAdapter.getUri(position), this,PhotoCaptionEdit.class);
         startActivity(intent);
@@ -151,7 +157,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     public void onItemClick(StaggeredGridView parent, View v, int position, long id) {
-        Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
+        if (DEBUG)
+            Log.i(TAG, "onItemClick:" + v + " pos=" + position + " id=" + id);
         Intent intent = new Intent(this,PhotoCaptionView.class);
         intent.putExtra("position",position);
         startActivity(intent);
@@ -159,7 +166,8 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
 
     @Override
     public boolean onItemLongClick(StaggeredGridView parent, View v, int position, long id) {
-        Log.i(TAG, "onItemLongClick:" + v + " pos=" + position + " id=" + id);
+        if (DEBUG)
+            Log.i(TAG, "onItemLongClick:" + v + " pos=" + position + " id=" + id);
         Intent intent = new Intent(Intent.ACTION_EDIT,
                 customGridAdapter.getUri(position), this,PhotoCaptionEdit.class);
         startActivity(intent);

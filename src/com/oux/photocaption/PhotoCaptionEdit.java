@@ -61,6 +61,7 @@ import android.preference.PreferenceManager;
 
 public class PhotoCaptionEdit extends Activity
 {
+    private static final boolean DEBUG = false;
     static final String TAG = "PhotoCaptionEdit";
     private Uri imageUri;
     private String mInitialDescription;
@@ -83,7 +84,8 @@ public class PhotoCaptionEdit extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        Log.i(TAG,"onCreate");
+        if (DEBUG)
+            Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
 
@@ -105,11 +107,13 @@ public class PhotoCaptionEdit extends Activity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        Log.d(TAG,"intent:" + intent + " action:" + action + " type:" + type);
+        if (DEBUG)
+            Log.d(TAG,"intent:" + intent + " action:" + action + " type:" + type);
         imageView = (ImageView) findViewById(R.id.ImageView);
         descriptionView = (EditText)findViewById(R.id.Description);
         mBackToShot = intent.getBooleanExtra("backToShot",false);
-        Log.i(TAG,"mBackToShot:" + mBackToShot);
+        if (DEBUG)
+            Log.i(TAG,"mBackToShot:" + mBackToShot);
 
         // Dialogs
         saveDialog = new AlertDialog.Builder(
@@ -182,18 +186,21 @@ public class PhotoCaptionEdit extends Activity
         // ACTION_REVIEW.equalsIgnoreCase(action)...
         if (Intent.ACTION_VIEW.equals(action) || Intent.ACTION_EDIT.equals(action))
         {
-            Log.d(TAG,"Action: "+ action);
+            if (DEBUG)
+                Log.d(TAG,"Action: "+ action);
             imageUri = intent.getData();
             checkMediaStore(imageUri);
             handleImage();
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
-            Log.d(TAG,"Action: Send");
+            if (DEBUG)
+                Log.d(TAG,"Action: Send");
             if (type.startsWith("image/")) {
                 imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 handleImage();
             }
         } else {
-            Log.d(TAG,"Nothing todo");
+            if (DEBUG)
+                Log.d(TAG,"Nothing todo");
             finish();
         }
     }
@@ -383,7 +390,8 @@ public class PhotoCaptionEdit extends Activity
 
     void handleImage() {
         if (imageUri != null) {
-            Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
+            if (DEBUG)
+                Log.i(TAG, "Incoming image Uri=" + imageUri + " path=" + imageUri.getPath());
             Bitmap preview_bitmap = null;
             try {
                 String image;
@@ -481,25 +489,30 @@ public class PhotoCaptionEdit extends Activity
       ExifInterface exifInterface = new ExifInterface();
 
       description = decompose(description);
-      Log.i(TAG,"Setting description:" + description + " on " + imageUri);
+      if (DEBUG)
+          Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifTag tag = exifInterface.buildTag(mTagId, description);
       if(tag != null) {
-          Log.i(TAG,"Tag not null => setTag");
+          if (DEBUG)
+              Log.i(TAG,"Tag not null => setTag");
           exifInterface.setTag(tag);
       }
       try {
           if (imageUri.getScheme().equals("content"))
           {
-              Log.i(TAG,"Content");
+              if (DEBUG)
+                  Log.i(TAG,"Content");
               exifInterface.forceRewriteExif(getRealPathFromURI(imageUri));
           } else {
-              Log.i(TAG,"File");
+              if (DEBUG)
+                  Log.i(TAG,"File");
               exifInterface.forceRewriteExif(imageUri.getPath());
           }
       } catch (Exception e) {
           Toast.makeText(this,
                     getResources().getString(R.string.tagnotsaved), Toast.LENGTH_LONG).show();
-          Log.e(TAG, "forceRewriteExif");
+          if (DEBUG)
+              Log.e(TAG, "forceRewriteExif");
           e.printStackTrace();
       }
   }
