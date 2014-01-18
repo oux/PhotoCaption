@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.MotionEvent;
 import android.util.Log;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -37,7 +38,10 @@ import android.webkit.MimeTypeMap;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
+import uk.co.senab.photoview.DefaultOnDoubleTapListener;
 import android.view.View.OnLongClickListener;
+
+import static android.view.MotionEvent.ACTION_UP;
 
 class PhotoCaptionPagerAdapter extends PagerAdapter {
 
@@ -212,10 +216,11 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
             }
             Log.i(TAG,"photoView: " + photoView);
             mAttacher = new PhotoViewAttacher(photoView);
-            PhotoEditListener photoEditListener = new PhotoEditListener();
+            PhotoEditListener photoEditListener = new PhotoEditListener(mAttacher);
             photoEditListener.setUri(imageUri);
             // photoEditListener.setParent(mAttacher);
             mAttacher.setOnLongClickListener(photoEditListener);
+            mAttacher.setOnDoubleTapListener(photoEditListener);
             mAttacher.setOnPhotoTapListener(new PhotoTapListener());
 
             // Now just add PhotoView to ViewPager and return it
@@ -227,9 +232,17 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         return view;
     }
 
-    private class PhotoEditListener implements OnLongClickListener {
+    private class PhotoEditListener extends DefaultOnDoubleTapListener implements
+        OnLongClickListener
+        {
+
         Uri mUri;
-        // weakReference PhotoViewAttacher pv;
+        public boolean mDisableEdit;
+
+        public PhotoEditListener(PhotoViewAttacher photoViewAttacher) {
+            super(photoViewAttacher);
+        }
+
 
         public void setUri(Uri uri) {
             mUri = uri;
@@ -237,18 +250,34 @@ class PhotoCaptionPagerAdapter extends PagerAdapter {
         }
 
         @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            if (e.getAction() == ACTION_UP)
+                mDisableEdit = false;
+            return true;
+        }
+
+
+        @Override
+        public boolean onDoubleTap(MotionEvent ev) {
+            mDisableEdit = true;
+            super.onDoubleTap(ev);
+            return true;
+        }
+
+        @Override
         public boolean onLongClick(View view) {
-            // if (null != this.mCurrentFlingRunnable) {
-                Intent intent = new Intent(mContext,PhotoCaptionEdit.class);
-                intent.setAction(Intent.ACTION_SEND);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_STREAM, mUri);
-                Log.d(TAG,"Extra:" + mUri);
-                mContext.startActivity(intent);
-                mContext.finish();
-                return true;
-            // }
-            // return false;
+            if (mDisableEdit)
+            {
+                return false;
+            }
+            Intent intent = new Intent(mContext,PhotoCaptionEdit.class);
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, mUri);
+            Log.d(TAG,"Extra:" + mUri);
+            mContext.startActivity(intent);
+            mContext.finish();
+            return true;
         }
 
     }
