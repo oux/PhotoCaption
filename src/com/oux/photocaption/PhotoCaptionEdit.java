@@ -478,11 +478,13 @@ public class PhotoCaptionEdit extends Activity
 
   void setDescription(String description)
   {
-      Log.i(TAG,"Setting description:" + description + " on " + imageUri);
       ExifInterface exifInterface = new ExifInterface();
 
-      ExifTag tag = exifInterface.buildTag(mTagId, decompose(description));
+      description = decompose(description);
+      Log.i(TAG,"Setting description:" + description + " on " + imageUri);
+      ExifTag tag = exifInterface.buildTag(mTagId, description);
       if(tag != null) {
+          Log.i(TAG,"Tag not null => setTag");
           exifInterface.setTag(tag);
       }
       try {

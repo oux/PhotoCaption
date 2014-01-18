@@ -483,7 +483,8 @@ class ExifOutputStream extends FilterOutputStream {
             case ExifTag.TYPE_ASCII:
                 byte buf[] = tag.getStringByte();
                 if (buf.length == tag.getComponentCount()) {
-                    buf[buf.length - 1] = 0;
+                    if (buf.length != 0)
+                        buf[buf.length - 1] = 0;
                     dataOutputStream.write(buf);
                 } else {
                     dataOutputStream.write(buf);
