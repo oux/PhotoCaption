@@ -60,7 +60,7 @@
         <activity android:name="PhotoCaptionCapture"
             android:label="@string/pc_capture"
             android:icon="@drawable/photo_caption_a_"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
+            android:configChanges="orientation|screenSize"
             android:parentActivityName="PhotoCaptionGallery"
             android:launchMode="singleTask"
             android:taskAffinity="com.oux.photocaption.capture"

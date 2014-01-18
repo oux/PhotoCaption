@@ -84,7 +84,6 @@ public class PhotoCaptionCapture extends Activity
 
         // TODO:
         // ACTION_REVIEW.equalsIgnoreCase(action)...
-        Log.d(TAG,"Taking a photo.");
         takePhoto();
     }
 
@@ -169,8 +168,8 @@ public class PhotoCaptionCapture extends Activity
         File path = Environment.getExternalStoragePublicDirectory(
                 mSharedPrefs.getString("pref_capture_directory", Environment.DIRECTORY_PICTURES)
                 );
-        Log.i(TAG,"path:" + path);
         File photo = new File(path,  "CAP_"+ sdf.format(new Date()) +".jpg");
+        Log.i(TAG,"Ask shot:" + photo);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
