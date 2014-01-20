@@ -298,8 +298,8 @@ public class PhotoCaptionEdit extends Activity
             case R.id.action_cancel:
                 if (mInitialDescription.equals(descriptionView.getText().toString()))
                 {
-                    // intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
-                    // startActivity(intent);
+                    intent = new Intent(getApplicationContext(),PhotoCaptionGallery.class);
+                    startActivity(intent);
                     finish();
                 }
                 else
