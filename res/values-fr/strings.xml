@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Photo Legende</string>
-    
+
     <string name="mode_edit">Mode Edition</string>
     <string name="mode_view">Mode Visualisation</string>
     <string name="mode_gallery">Mode Galerie</string>
@@ -13,7 +13,7 @@
     <string name="pc_gallery">Galerie Photo Legende</string>
     <string name="pc_view">Visualisation Photo Legende</string>
     <string name="pc_settings">Parametrage Photo Legende</string>
-    
+
     <string name="view">Visualisation</string>
     <string name="edit">Editer</string>
     <string name="capture">Capture</string>
