@@ -29,6 +29,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -50,12 +51,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.IfdId;
-import android.preference.PreferenceManager;
 
 public class PhotoCaptionCapture extends Activity
 {
