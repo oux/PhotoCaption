@@ -56,7 +56,7 @@
                 android:title="@string/pref_gallery_exif_field"
                 android:summary="@string/pref_gallery_exif_field_summ"
                 />
-            <ListPreference
+            <com.oux.photocaption.PhotoCaptionListPreference
                 android:key="pref_edit_exif_field"
                 android:title="@string/pref_edit_exif_field"
                 android:summary="@string/pref_edit_exif_field_summ"

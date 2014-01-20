@@ -1,9 +1,12 @@
 package com.oux.photocaption;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
- 
+
 import android.util.Log;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,7 +24,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
 
 import com.android.gallery3d.exif.ExifInterface;
- 
+
 public class PhotoCaptionSettingsFragment extends PreferenceFragment {
 
     static final String TAG = "PhotoCaptionSettingsFragment";
@@ -31,6 +34,7 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
     private static final String EXIFGAL = "pref_gallery_exif_field";
     private static final String EXIFVIEW = "pref_view_exif_field";
     private static final String EXIFEDIT = "pref_edit_exif_field";
+    PhotoCaptionListPreference mPrefExifEdit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,30 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.settings);
 
+        Intent intent = getActivity().getIntent();
+        String wantedPref = intent.getStringExtra("preference");
+
+        mPrefExifEdit = ((PhotoCaptionListPreference)findPreference(EXIFEDIT));
+
         setPackageVersion();
         setCamAppList();
         setExifLists();
         setDirectoryList();
+
+        if (wantedPref != null)
+        {
+            startPreference(wantedPref);
+        }
+    }
+
+    public void startPreference(String dialogName){
+        if (EXIFEDIT.equals(dialogName))
+        {
+            if (mPrefExifEdit != null)
+            {
+                mPrefExifEdit.show();
+            }
+        }
     }
 
     public void setPackageVersion()
@@ -69,22 +93,31 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
         values.add(Integer.toString(ExifInterface.TAG_IMAGE_DESCRIPTION));
         entries.add("ImageDescription");
 
-        ((MultiSelectListPreference)
-         findPreference(EXIFVIEW)).setEntries(entries.toArray(new
-             CharSequence[entries.size()]));
-        ((MultiSelectListPreference)
-         findPreference(EXIFVIEW)).setEntryValues(values.toArray(new
-             CharSequence[values.size()]));
-        ((MultiSelectListPreference)
-         findPreference(EXIFGAL)).setEntries(entries.toArray(new
-             CharSequence[entries.size()]));
-        ((MultiSelectListPreference)
-         findPreference(EXIFGAL)).setEntryValues(values.toArray(new
-             CharSequence[values.size()]));
-        ((ListPreference)findPreference(EXIFEDIT)).setEntries(entries.toArray(new
-            CharSequence[entries.size()]));
-        ((ListPreference)findPreference(EXIFEDIT)).setEntryValues(values.toArray(new
-            CharSequence[values.size()]));
+        MultiSelectListPreference prefExifGal  = ((MultiSelectListPreference) findPreference(EXIFGAL));
+        MultiSelectListPreference prefExifView = ((MultiSelectListPreference) findPreference(EXIFVIEW));
+
+        prefExifGal.setEntries(entries.toArray(new CharSequence[entries.size()]));
+        prefExifGal.setEntryValues(values.toArray(new CharSequence[values.size()]));
+
+        prefExifView.setEntries(entries.toArray(new CharSequence[entries.size()]));
+        prefExifView.setEntryValues(values.toArray(new CharSequence[values.size()]));
+
+        mPrefExifEdit.setEntries(entries.toArray(new CharSequence[entries.size()]));
+        mPrefExifEdit.setEntryValues(values.toArray(new CharSequence[values.size()]));
+
+        Set<String> defPrefExifGal = prefExifGal.getValues();
+        if (defPrefExifGal.size() == 0)
+            prefExifGal.setValues(
+                    new HashSet<String>(Arrays.asList(Integer.toString(ExifInterface.TAG_USER_COMMENT))));
+
+        Set<String> defPrefExifView = prefExifView.getValues();
+        if (defPrefExifView.size() == 0)
+            prefExifView.setValues(
+                    new HashSet<String>(Arrays.asList(Integer.toString(ExifInterface.TAG_USER_COMMENT))));
+
+        String defPrefExifEdit = mPrefExifEdit.getValue();
+        if (defPrefExifEdit == null)
+            mPrefExifEdit.setValue(Integer.toString(ExifInterface.TAG_USER_COMMENT));
     }
 
     public void setCamAppList()
@@ -106,16 +139,15 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
             }
         }
 
+        final ListPreference prefCamApp = ((ListPreference)findPreference(CAMAPP));
         if (values.size() <= 2) {
-            findPreference(CAMAPP).setEnabled(false);
+            prefCamApp.setEnabled(false);
             Log.e(TAG,"No more than one application found to take a shot");
         }
         else
         {
-            ((ListPreference)findPreference(CAMAPP)).setEntries(values.toArray(new
-                CharSequence[values.size()]));
-            ((ListPreference)findPreference(CAMAPP)).setEntryValues(values.toArray(new
-                CharSequence[values.size()]));
+            prefCamApp.setEntries(values.toArray(new CharSequence[values.size()]));
+            prefCamApp.setEntryValues(values.toArray(new CharSequence[values.size()]));
         }
     }
 
@@ -137,9 +169,11 @@ public class PhotoCaptionSettingsFragment extends PreferenceFragment {
             }
         }
 
-        ((ListPreference)findPreference(DIRECTORY)).setEntries(values.toArray(new
-            CharSequence[values.size()]));
-        ((ListPreference)findPreference(DIRECTORY)).setEntryValues(values.toArray(new
-            CharSequence[values.size()]));
+        final ListPreference listPrefDir = ((ListPreference)findPreference(DIRECTORY));
+        listPrefDir.setEntries(values.toArray(new CharSequence[values.size()]));
+        listPrefDir.setEntryValues(values.toArray(new CharSequence[values.size()]));
+        final String prefDir = listPrefDir.getValue();
+        if (prefDir == null)
+            listPrefDir.setValue(Environment.DIRECTORY_PICTURES);
     }
 }

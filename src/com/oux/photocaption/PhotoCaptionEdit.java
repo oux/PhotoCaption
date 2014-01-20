@@ -307,6 +307,7 @@ public class PhotoCaptionEdit extends Activity
                 return true;
             case R.id.action_settings:
                 intent = new Intent(getApplicationContext(),PhotoCaptionSettings.class);
+                intent.putExtra("preference","pref_edit_exif_field");
                 startActivityForResult(intent,SETTINGS);
                 return true;
             case R.id.action_save:
