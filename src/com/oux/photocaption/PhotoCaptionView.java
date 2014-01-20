@@ -28,6 +28,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 
 public class PhotoCaptionView extends Activity
 {
@@ -121,6 +122,7 @@ public class PhotoCaptionView extends Activity
             Log.d(TAG,"new position: " + mPosition);
         mViewPager.setCurrentItem(mPosition,false);
 
+        mViewPager.setOnPageChangeListener(new PhotoChangeListener());
     }
 
     @Override
@@ -160,10 +162,12 @@ public class PhotoCaptionView extends Activity
         return intent;
     }
 
-    // Somewhere in the application.
-    public void doShare(Intent shareIntent) {
-        // When you want to share set the share intent.
-        mShareActionProvider.setShareIntent(shareIntent);
+
+    private class PhotoChangeListener extends SimpleOnPageChangeListener {
+        @Override
+        public void onPageSelected(int p) {
+            mShareActionProvider.setShareIntent(getDefaultIntent());
+        }
     }
 
     @Override
