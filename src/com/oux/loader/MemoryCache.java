@@ -80,7 +80,9 @@ public class MemoryCache {
     }
 
     long getSizeInBytes(Pair<Bitmap,String> item) {
-        if(item==null)
+        if(item == null)
+            return 0;
+        if(item.first == null)
             return 0;
         long size = item.first.getRowBytes() * item.first.getHeight();
         if (item.second != null)

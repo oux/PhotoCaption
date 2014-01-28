@@ -130,7 +130,6 @@ public class PhotoCaptionGallery extends Activity implements AdapterView.OnItemC
         if (DEBUG)
             Log.i(TAG,"onResume");
         setGridView();
-        customGridAdapter.notifyDataSetChanged();
         if (mEntireCaption)
             if (gridState != null) sGridView.onRestoreInstanceState(gridState);
         super.onResume();
