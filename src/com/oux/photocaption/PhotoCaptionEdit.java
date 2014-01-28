@@ -472,6 +472,13 @@ public class PhotoCaptionEdit extends Activity
                     Charset.forName("US-ASCII").newEncoder();
 
             if (encoder.canEncode(description)) {
+                if ( description.equals("")
+                        || description.charAt(0) == '\0'
+                        || description.equals("Jpeg\0")
+                        || description.equals("Jpeg\0\0\0\0")
+                        || description.equals("ASCII\0\0\0\0")
+                   )
+                    return "";
                 return description;
             } else {
                 return "<BINARY DATA>";

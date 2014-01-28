@@ -145,7 +145,12 @@ public class ImageLoader {
                     desc = "<BINARY DATA>";
             }
 
-            if (!desc.equals(""))
+            if ( !desc.equals("")
+                    && desc.charAt(0) != '\0'
+                    && !desc.equals("Jpeg\0")
+                    && !desc.equals("Jpeg\0\0\0\0")
+                    && !desc.equals("ASCII\0\0\0\0")
+               )
                 if (description.equals(""))
                     description = desc;
                 else
